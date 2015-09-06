@@ -1,0 +1,9 @@
+# todo for 0.2.1
+- add more package dependency verification
+- install R packages during install?
+- pretty_lefse.py integration
+- export2graphlan.py support
+- add more run_lefse.py analysis parameters
+- better logging features
+- better way to install lefse
+- two group comparison option for classes with 2+ groups

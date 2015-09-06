@@ -37,15 +37,7 @@ except ImportError:
 
 
 
-class Logger(object):
-	"""Simple Logging Class""" 
-	def __init__(self, filename="Default.log"):
-		self.terminal = sys.stdout
-		self.log = open(filename, "a")
 
-	def write(self, message):
-		self.terminal.write(message)
-		self.log.write(message)
 
 
 
@@ -69,7 +61,7 @@ def get_args():
 	
 	
 	"""Arguments for LEfSe discriminant analysis"""
-	parser.add_argument('-p', '--pval', action = "store", dest = "p_cutoff", default = 0.05, help = 'Change alpha value for the Anova test (default 0.05)', type = float)
+	parser.add_argument('-p', '--pval', action = "store", dest = "p_cutoff", default = 0.05, help = 'Change alpha value for the Anova test (default 0.05)')
 	parser.add_argument('-e','--effect', action = "store", dest = "lda_cutoff", default = 2, help = 'Change the cutoff for logarithmic                  LDA score (default 2.0).', type = float)
 	parser.add_argument('-str', '--strict', action = "store", dest = "strictness", default = 0, choices=[0,1], help = 'Change the strictness of the comparisons. Can be changed to less strict(1). [default = 0](more-strict).', type = int)
 	
@@ -80,7 +72,7 @@ def get_args():
 
 
 	"""Arguments for other types of analyses"""
-	parser.add_argument('-py', '--pretty', action = "store_true", dest = "pretty", help = 'Enable this option if you would like to generate a pretty lefse table from the results. This table will consist of a table of all LEfSe results across each longitudinal timepoint and the corresponding effect size. This command can currently only work with 2 groups. See the github page for more information.')
+	#parser.add_argument('-py', '--pretty', action = "store_true", dest = "pretty", help = 'Enable this option if you would like to generate a pretty lefse table from the results. This table will consist of a table of all LEfSe results across each longitudinal timepoint and the corresponding effect size. This command can currently only work with 2 groups. See the github page for more information.')
 
 	return parser.parse_args()
 
@@ -175,9 +167,9 @@ def main(input, output, map, level, classid, subclassid, subjectid, compare, spl
 		print 'Formatting Input: ' + table_out
 		print 'Formatting Output: ' + format_file_out
 		if subclassid == "NA":
-			subprocess.call(['./format_input.py', table_out, format_file_out, '-u 1', '-c 2', '-o 1000000', '-f c'])
+			subprocess.call(['format_input.py', table_out, format_file_out, '-u 1', '-c 2', '-o 1000000', '-f', 'c'])
 		else:
-			subprocess.call(['./format_input.py', table_out, format_file_out, '-u 1', '-c 2', '-s 3', '-o 1000000', '-f c'])
+			subprocess.call(['format_input.py', table_out, format_file_out, '-u 1', '-c 2', '-s 3', '-o 1000000', '-f', 'c'])
 			
 		
 		"""Run run_lefse.py from LEfSe package"""
@@ -185,8 +177,7 @@ def main(input, output, map, level, classid, subclassid, subjectid, compare, spl
 		print 'Running Analysis...'
 		print 'Analysis Input: ' + format_file_out
 		print 'Analysis Output: ' + run_file_out 
-		subprocess.call(['./run_lefse.py', format_file_out, run_file_out, '-a', p_cutoff, '-l', lda_cutoff, '-y', strictness])
-		print '\n'
+		subprocess.call(['run_lefse.py', format_file_out, run_file_out, '-a', str(p_cutoff), '-l', str(lda_cutoff), '-y', str(strictness)])
 		
 	print 'Analysis Completed.'
 
@@ -194,8 +185,11 @@ def main(input, output, map, level, classid, subclassid, subjectid, compare, spl
 
 
 if __name__ == '__main__':
+	
 	"""Get input arguments and run command"""
-	#args = get_args()
+	args = get_args()
+	
+	"""Credits"""
 	print "Koeken" + ' v' + __version__ + ': ' + "Linear Discriminant Analysis (LEfSe) on A Longitudinal Microbial Dataset."
 	print 'Written by ' + __author__ + ' (' + __email__ + ')' + '\n'
 	print 'LEfSe Credits: "Metagenomic biomarker discovery and explanation"'
@@ -203,30 +197,17 @@ if __name__ == '__main__':
 	print 'Genome Biology, 12:R60, 2011'+ '\n'
 	
 	
-	""" Check to see if class/subclass/split metadata columns exist in the mapping file
+	"""Error Check to see if class/subclass/split metadata columns exist in the mapping file"""
 	map_chk = pd.read_table(args.map)	
 	if str(args.classid) not in map_chk.columns.values.tolist():
-		raise ValueError('Warning. There is no value with that name in your mapping file. Please verify the class ID chosen is actually a column name in your mapping file.')
+		raise ValueError('Warning. There is no class variable with that column name in your mapping file. Please verify the class ID chosen is actually a column name in your mapping file.')
 	if str(args.split) not in map_chk.columns.values.tolist():
-		raise ValueError('Warning. There is no value with that name in your mapping file. Please verify the subclass ID chosen is actually a column name in your mapping file.')
-		
-	sys.stdout = Logger(args.output + "/koeken_log.txt")
+		raise ValueError('Warning. There is no split variable with that column name in your mapping file. Please verify the subclass ID chosen is actually a column name in your mapping file.')
+	
 
-	#main(args.input, args.output, args.map, args.level, args.classid, args.subclassid, args.subjectid, args.compare, args.split, args.p_cutoff, args.lda_cutoff, args.strictness)
-	"""
+	"""Run command"""
+	main(args.input, args.output, args.map, args.level, args.classid, args.subclassid, args.subjectid, args.compare, args.split, args.p_cutoff, args.lda_cutoff, args.strictness)
 	
 	
-	
-	main(input = "tests/otu_table_rdp_nochimera_m0001n14000_pups.biom", 
-		output = "testfolder", 
-		   map = "tests/v4-5-sq-2-map.txt", 
-		 level = 6,
-	   classid = "Group",
-	subclassid = "NA",
-	 subjectid = "#SampleID",
-	   compare = ['CON','STAT'],
-		 split = "Season.name",
-		p_cutoff = 0.05, 
-		lda_cutoff = 2, 
-		strictness = 0)
+
 	
