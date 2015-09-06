@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+import setuptools
 
 setuptools.setup(
     name = "koeken",
@@ -13,7 +13,7 @@ setuptools.setup(
     keywords = "Biology Microbiome LEFSE QIIME Formatting Diversity Python Bioinformatics",
 
 
-    scripts = ['koeken/pannenkoek.py', 'koeken/lefse_src/format_input.py', 'koeken/lefse_src/run_lefse.py', 'koeken/lefse_src/lefse.py'],
+    scripts = ['koeken/koeken.py', 'koeken/lefse_src/format_input.py', 'koeken/lefse_src/run_lefse.py', 'koeken/lefse_src/lefse.py'],
 
 
     packages=setuptools.find_packages(),
