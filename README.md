@@ -9,7 +9,7 @@ Koeken is a tool developed to speed up the process of analyzing microbial commun
 3. Convert ; to | within the taxonomy names
 4. Upload to Galaxy-Lefse and analyze (format, run, graph)
 
-Now this workflow may seem simple, but when you have longitudinal dataset with 12 different timepoint and 4 different groups, its becomes a very tedious task. You will need to repeat this process over and over manually subsetting the groups. This is where koeken comes into play. koeken is just a simple fancy for loop which iterates over all the different groups found in you Time variable and runs all the processing steps found above.
+Now this workflow may seem simple, but when you have longitudinal dataset with 12 different timepoint and 4 different groups, its becomes a very tedious task. You will need to repeat this process over and over manually subsetting the groups. This is where koeken comes into play. Koeken is just a simple fancy ```for``` loop which iterates over all the different groups found in your 'Time' variable and runs all the processing steps found above.
 
 ##### Features
 Koeken has some additional features built in that allow you to subset you data in various ways. Not only can you iterate over different timepoints with the ```--split``` parameter, but you can choose to compare whichever groups you want to with the ```--compare``` command. If you have 4 different groups, but are only interested in running LEfSe with 2 or 3 groups, you can list the names of the groups, and koeken will subset the tables and iterate over each day with only those specified groups.  
@@ -18,11 +18,11 @@ Koeken has some additional features built in that allow you to subset you data i
 The outputs from koeken are many different text files. These files are normal output from a LEfSe analysis, but there are one for each timepoint. Within the one output folder there are 2 addional folders. One for the output from running summarize_taxa.py and the other is from running LEfSe. They are named summarize_taxa_L# and lefse_output. The summarize_taxa folder is made up of relative abundance plots for each timepoint and includes metadata for the chosen class/sublcass. The lefse_output has the files for the two stages of LEfSe analysis; formatting and running. These files can be used on the galaxy server. Specifically, the files wihin run_lefse can be uploaded to the galaxy browser and used to plot the cladogram and bar charts. You will just need to choose ```lefse_res``` as the type of file when uploading.
   
 Output file structure:   
-output_folder/
-  ---summarize_taxa
-  ---lefse_output
-    ---format_lefse
-    ---run_lefse
+output_folder/  
+  ---summarize_taxa  
+  ---lefse_output  
+    ---format_lefse  
+    ---run_lefse  
 
 
 #### Credits
