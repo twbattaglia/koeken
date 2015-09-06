@@ -19,10 +19,11 @@ The outputs from koeken are many different text files. These files are normal ou
   
 Output file structure:   
 output_folder/  
-  ---summarize_taxa  
-  ---lefse_output  
-    ---format_lefse  
-    ---run_lefse  
+---summarize_taxa  
+---lefse_output  
+-------format_lefse  
+-------run_lefse  
+    
 
 
 #### Credits
