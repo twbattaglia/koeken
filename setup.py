@@ -15,6 +15,11 @@ setuptools.setup(
 
     scripts = ['koeken/koeken.py', 'koeken/lefse_src/format_input.py', 'koeken/lefse_src/run_lefse.py', 'koeken/lefse_src/lefse.py'],
 
+    entry_points={
+        'console_scripts':
+            ['koeken = koeken.koeken:main']
+        }
+
 
     packages=setuptools.find_packages(),
 

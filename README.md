@@ -13,10 +13,10 @@ Now this workflow may seem simple, but when you have longitudinal dataset with 1
 
 ##### Features
 Koeken has some additional features built in that allow you to subset you data in various ways. Not only can you iterate over different timepoints with the ```--split``` parameter, but you can choose to compare whichever groups you want to with the ```--compare``` command. If you have 4 different groups, but are only interested in running LEfSe with 2 or 3 groups, you can list the names of the groups, and koeken will subset the tables and iterate over each day with only those specified groups.  
-  
+
 #### Outputs
 The outputs from koeken are many different text files. These files are normal output from a LEfSe analysis, but there are one for each timepoint. Within the one output folder there are 2 addional folders. One for the output from running summarize_taxa.py and the other is from running LEfSe. They are named summarize_taxa_L# and lefse_output. The summarize_taxa folder is made up of relative abundance plots for each timepoint and includes metadata for the chosen class/sublcass. The lefse_output has the files for the two stages of LEfSe analysis; formatting and running. These files can be used on the galaxy server. Specifically, the files wihin run_lefse can be uploaded to the galaxy browser and used to plot the cladogram and bar charts. You will just need to choose ```lefse_res``` as the type of file when uploading.
-  
+
 Output file structure:   
 output_folder/  
 ---summarize_taxa  
@@ -31,7 +31,7 @@ Big thank you to the QIIME group:
 "QIIME allows analysis of high-throughput community sequencing data"  
     J Gregory Caporaso, Justin Kuczynski, Jesse Stombaugh, Kyle Bittinger, Frederic D Bushman, Elizabeth K Costello, Noah Fierer, Antonio Gonzalez Pena, Julia K Goodrich, Jeffrey I Gordon, Gavin A Huttley, Scott T Kelley, Dan Knights, Jeremy E Koenig, Ruth E Ley, Catherine A Lozupone, Daniel McDonald, Brian D Muegge, Meg Pirrung, Jens Reeder, Joel R Sevinsky, Peter J Turnbaugh, William A Walters, Jeremy Widmann, Tanya Yatsunenko, Jesse Zaneveld and Rob Knight; Nature Methods, 2010;   doi:10.1038/nmeth.f.303  
 
-Big thank you to the LEfSe group: 
+Big thank you to the LEfSe group:
 "Metagenomic biomarker discovery and explanation"  
 Nicola Segata, Jacques Izard, Levi Waldron, Dirk Gevers, Larisa Miropolsky, Wendy S Garrett, and Curtis Huttenhower  
 Genome Biology, 12:R60, 2011  
@@ -43,30 +43,30 @@ Koeken is heavily dependent upon the QIIME and LEfSe tools. Because koeken is ba
 R --quiet
 install.packages(c('splines','stats4','survival','mvtnorm','modeltools','coin','MASS'), repos = "http://cran.us.r-project.org")
 ```  
-  
-  
+
+
 ### Installing Koeken
 Because Koeken needs scripts found within the QIIME package, it is easiest to use when you are in a MacQIIME session. If you have MacQIIME installed, you must first initialize it before installing Koeken, so that it is placed in the correct location. If you do not have macqiime installed, you can still run koeken. You will just need to have the scripts available in your path, or if you dont have qiime installed and you also dont have MacQIIME, installing koeken will install qiime for you, but be aware that it can take quite a bit of time to install all of qiime and it's dependencies using 'pip'.  
 ```shell
 macqiime
 ```
-  
-Once you have initialized a new macqiime session, you can now go ahead and install koeken! Run the command below while in a macqiime session and it should install relatively quickly. To verify the installation was completed, you can run the second command found below which runs the scripts' help command. If you see options/parameters, you're good to go! 
+
+Once you have initialized a new macqiime session, you can now go ahead and install koeken! Run the command below while in a macqiime session and it should install relatively quickly. To verify the installation was completed, you can run the second command found below which runs the scripts' help command. If you see options/parameters, you're good to go!
 ```shell
 pip install https://github.com/twbattaglia/koeken/zipball/master
 koeken.py --help
 ```
-  
+
 ### Simple Example
 In this example we have a typical wokflow using koeken. We have an otu table in .biom format, a mapping text file, and an output folder to place the results. The ```--class``` parameter corresponds to the column name which describes the different groups in your mapping file. The ```--split``` parameter corresponds to the column name which describes the different timepoints in your data.  
 ```shell
-koeken.py --input otu_table.biom --output output_folder/ --map mapping_file.txt --class Treatment --split Day 
+koeken --input otu_table.biom --output output_folder/ --map mapping_file.txt --class Treatment --split Day
 ```
 
 
 ### Usage
 ```shell
-usage: koeken.py [-h] [-v] -i INPUT -o OUTPUT -m MAP [-l {2,3,4,5,6,7}] -cl
+usage: koeken [-h] [-v] -i INPUT -o OUTPUT -m MAP [-l {2,3,4,5,6,7}] -cl
                  CLASSID [-sc SUBCLASSID] [-su SUBJECTID] [-p P_CUTOFF]
                  [-e LDA_CUTOFF] [-str {0,1}] [-c COMPARE [COMPARE ...]] -sp
                  SPLIT

@@ -22,6 +22,7 @@ import sys
 import glob
 import argparse
 import subprocess
+#import pretty_lefse as pl
 
 try:
 	import pandas as pd
@@ -72,7 +73,9 @@ def get_args():
 
 
 	"""Arguments for other types of analyses"""
-	#parser.add_argument('-py', '--pretty', action = "store_true", dest = "pretty", help = 'Enable this option if you would like to generate a pretty lefse table from the results. This table will consist of a table of all LEfSe results across each longitudinal timepoint and the corresponding effect size. This command can currently only work with 2 groups. See the github page for more information.')
+    #parser.add_argument('-py', '--pretty', action = "store_true", dest = "pretty", help = 'Enable this option if you would like to generate a pretty lefse table from the results. This table will consist of a table of all LEfSe results across each longitudinal timepoint and the corresponding effect size. This command can currently only work with 2 groups. See the github page for more information.', default = True)
+	
+    #parser.add_argument('-con', '--control', action = "store", dest = "plcontrol", help = 'Enable this option if you would like to generate a pretty lefse table from the results. This table will consist of a table of all LEfSe results across each longitudinal timepoint and the corresponding effect size. This command can currently only work with 2 groups. See the github page for more information.')
 
 	return parser.parse_args()
 
@@ -111,9 +114,9 @@ def main(input, output, map, level, classid, subclassid, subjectid, compare, spl
 		os.makedirs(run_dir)
 	
 	"""Output location for Pretty-LEfSe step"""
-	#pretty_dir = '{}/{}'.format(lefse_dir, "pretty_lefse")
-	#if not os.path.exists(pretty_dir):
-		#os.makedirs(pretty_dir)
+    #pretty_dir = '{}/{}'.format(lefse_dir, "pretty_lefse")
+    #if not os.path.exists(pretty_dir):
+    #os.makedirs(pretty_dir)
 	
 	
 	"""Run summarize_taxa.py command"""
@@ -178,7 +181,12 @@ def main(input, output, map, level, classid, subclassid, subjectid, compare, spl
 		print 'Analysis Input: ' + format_file_out
 		print 'Analysis Output: ' + run_file_out 
 		subprocess.call(['run_lefse.py', format_file_out, run_file_out, '-a', str(p_cutoff), '-l', str(lda_cutoff), '-y', str(strictness)])
-		
+	
+	
+    #print "Running Pretty LEfSe..."
+    #frames = [ pl.process_table(file_loc = f, write_values = False, output = pretty_dir, control = pl_control) #for f in glob.glob(run_dir + "/*.txt") ]
+    #result = pd.concat(frames, axis = 1)
+    #result.to_csv(pretty_dir + "/pretty_table.txt", sep = '\t', header = True, index = True)
 	print 'Analysis Completed.'
 
 
@@ -206,7 +214,8 @@ if __name__ == '__main__':
 	
 
 	"""Run command"""
-	main(args.input, args.output, args.map, args.level, args.classid, args.subclassid, args.subjectid, args.compare, args.split, args.p_cutoff, args.lda_cutoff, args.strictness)
+    main(args.input, args.output, args.map, args.level, args.classid, args.subclassid, args.subjectid, args.compare, args.split, args.p_cutoff, args.lda_cutoff, args.strictness)
+    #args.pretty, args.plcontrol)
 	
 	
 
