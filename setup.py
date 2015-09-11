@@ -18,7 +18,7 @@ setuptools.setup(
     entry_points={
         'console_scripts':
             ['koeken = koeken.koeken:main']
-        }
+        },
 
 
     packages=setuptools.find_packages(),
