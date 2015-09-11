@@ -214,7 +214,7 @@ if __name__ == '__main__':
 	
 
 	"""Run command"""
-    main(args.input, args.output, args.map, args.level, args.classid, args.subclassid, args.subjectid, args.compare, args.split, args.p_cutoff, args.lda_cutoff, args.strictness)
+	main(args.input, args.output, args.map, args.level, args.classid, args.subclassid, args.subjectid, args.compare, args.split, args.p_cutoff, args.lda_cutoff, args.strictness)
     #args.pretty, args.plcontrol)
 	
 	
