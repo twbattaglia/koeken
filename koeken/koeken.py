@@ -145,7 +145,7 @@ def main(input, output, map, level, classid, subclassid, subjectid, compare, spl
 	if subclassid == "NA":
 		to_keep = [subjectID_pos,classID_pos] + bacteria_pos
 	else:
-		subclassID_pos = sum_taxa.columns.get_loc(subclassid)
+		subclassID_pos = sumtaxa_df.columns.get_loc(subclassid)
 		to_keep = [subjectID_pos, classID_pos, subclassID_pos] + bacteria_pos
 
 	
