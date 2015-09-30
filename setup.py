@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name = "koeken",
-    version = "0.2.0",
+    version = "0.2.1",
     url = "[https://github.com/twbattaglia/koeken",
 
     author = "Thomas W. Battaglia",
@@ -13,12 +13,12 @@ setuptools.setup(
     keywords = "Biology Microbiome LEFSE QIIME Formatting Diversity Python Bioinformatics",
 
 
-    scripts = ['koeken/koeken.py', 'koeken/lefse_src/format_input.py', 'koeken/lefse_src/run_lefse.py', 'koeken/lefse_src/lefse.py'],
+    scripts = ['koeken/koeken.py','koeken/lefse_src/format_input.py', 'koeken/lefse_src/run_lefse.py', 'koeken/lefse_src/lefse.py', 'koeken/lefse_src/plot_cladogram.py', 'koeken/lefse_src/export2graphlan.py', 'koeken/lefse_src/hclust2/hclust2.py'],
 
-    entry_points={
-        'console_scripts':
-            ['koeken = koeken.koeken:main']
-        },
+    #entry_points={
+        #'console_scripts':
+            #['koeken = koeken.koeken:main']
+        #},
 
 
     packages=setuptools.find_packages(),

@@ -9,4 +9,5 @@ koeken.egg-info/requires.txt
 koeken.egg-info/top_level.txt
 koeken/lefse_src/format_input.py
 koeken/lefse_src/lefse.py
+koeken/lefse_src/plot_cladogram.py
 koeken/lefse_src/run_lefse.py

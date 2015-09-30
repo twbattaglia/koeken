@@ -1,4 +1,5 @@
-# todo for 0.2.1
+# todo for 0.2.2
+- add table for all timepoints
 - add more package dependency verification
 - install R packages during install?
 - pretty_lefse.py integration
