@@ -66,10 +66,10 @@ koeken --input otu_table.biom --output output_folder/ --map mapping_file.txt --c
 
 ### Usage
 ```shell
-usage: koeken [-h] [-v] -i INPUT -o OUTPUT -m MAP [-l {2,3,4,5,6,7}] -cl
+usage: koeken.py [-h] [-v] -i INPUT -o OUTPUT -m MAP [-l {2,3,4,5,6,7}] -cl
                  CLASSID [-sc SUBCLASSID] [-su SUBJECTID] [-p P_CUTOFF]
                  [-e LDA_CUTOFF] [-str {0,1}] [-c COMPARE [COMPARE ...]] -sp
-                 SPLIT
+                 SPLIT [-pc] [-g]
 
 Performs Linear Discriminant Analysis (LEfSe) on A Longitudinal Dataset.
 
@@ -82,7 +82,8 @@ optional arguments:
   -o OUTPUT, --output OUTPUT
                         Location of the folder to place all resulting files.
                         If folder does not exist, the program will create it.
-  -m MAP, --map MAP     Location of the mapping file associated with OTU Table.
+  -m MAP, --map MAP     Location of the mapping file associated with OTU
+                        Table.
   -l {2,3,4,5,6,7}, --level {2,3,4,5,6,7}
                         Level for which to use for summarize_taxa.py. [default
                         = 6]
@@ -109,4 +110,9 @@ optional arguments:
                         The name of the timepoint variable in you mapping
                         file. This variable will be used to split the table
                         for each value in this variable.
+  -pc, --clade          Plot Lefse Cladogram for each output time point.
+                        Outputs are placed in a new folder created in the
+                        lefse results location. Default file type in (.png)
+  -g, --graphlan        Convert LEfSe Results to Graphlan compatible tree
+                        (Experimental)
 ```
