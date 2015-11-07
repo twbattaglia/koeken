@@ -208,7 +208,7 @@ def main(input, output, map, level, classid, subclassid, subjectid, compare, spl
 		print('\n')
 
 
-		"""Check to see if graphlan option was chosen"""
+		#"""Check to see if graphlan option was chosen"""
 		#if graphlan == True:
 			#"""Convert files to graphlan compatibile files"""
 			#clade_file_out = run_dir + os.path.basename(format_file_out).replace('_format.txt', '.png')
