@@ -40,8 +40,7 @@ Genome Biology, 12:R60, 2011
 Koeken is heavily dependent upon the QIIME and LEfSe tools. Because koeken is basicaly a wrapper for the connection between these two tools, it requires the depencies found in both. If you have MacQIIME already installed you have everything you need for the QIIME side. LEfSe on the other hand requires a few R packages. If you dont already have R, you will need to go install it first before running the commands below. (). After you have R installed you can run the command below, which will install the necessary dependencies required by LEfSe. First you will need to open a new Terminal window. Then copy and paste the two commands below. You may see some errors regarding the 'splines' and 'stats4' packages. You can ignore these warnings. Once the command is run and everything is properly installed, exit out of the Terminal window and open a new one to install Koeken.
 
 ```shell
-R --quiet
-install.packages(c('splines','stats4','survival','mvtnorm','modeltools','coin','MASS'), repos = "http://cran.us.r-project.org")
+R -e "install.packages(c('splines','stats4','survival','mvtnorm','modeltools','coin','MASS'), repos = 'http://cran.stat.ucla.edu')"
 ```  
 
 
