@@ -1,6 +1,10 @@
+# Version 0.2.2 (1/11/16)
+- added pretty_lefse.py to make combined tables
+- added R package installation within setup.py
+
 # Version 0.2.1 (9/29/15)
 - cleaned up greengene naming convention
-- starterd script to convert to graphlan
+- started script to convert to graphlan
 - added option --clade to plot lefse cladogram with default settings.
 - removed koeken console script
 - added more code to eventually add pretty lefse

@@ -1,17 +1,18 @@
 #!/usr/bin/env python
 """
-	pannenkoek.py
+	koeken.py
 	~~~~~~~~~
 	A simple command line application to run LEfSe multiple times
 	on the same OTU table.
 	:copyright: (c) 2015 by Thomas W. Battaglia.
 	:license: BSD, see LICENSE for more details.
+
 """
 
 __author__ = 'Thomas W. Battaglia'
 __copyright__ = 'Copyright 2015'
 __license__ = 'BSD'
-__version__ = '0.2.1'
+__version__ = '0.2.2'
 __email__ = 'tb1280@nyu.edu'
 __status__ = 'Development'
 
@@ -28,16 +29,14 @@ import re
 try:
 	import pandas as pd
 except ImportError:
-	raise ImportError('The module """pandas"" was not found. '
+	raise ImportError('The module """pandas"" was not found! '
 	'Please install with """pip install pandas""" and try again')
 
 try:
 	import qiime
 except ImportError:
-	raise ImportError('The module """QIIME"" was not found. '
-	'Use either MacQIIME or """pip install qiime""" before running the command.')
-
-
+	raise ImportError('The module """QIIME"" was not found! '
+	'Use either MacQIIME or """pip install qiime""" before running the command. If using MacQIIME, start the macqiime environment first before running the command.')
 
 
 
@@ -201,8 +200,8 @@ def main(input, output, map, level, classid, subclassid, subjectid, compare, spl
 			"""Run plot_cladogram.py from LEfSe package"""
 			clade_file_out = clado_dir + os.path.basename(format_file_out).replace('_format.txt', '.png')
 			print 'Plotting Cladogram...'
-			#print 'Plot Input: ' + run_file_out
-			#print 'Plot Output: ' + clade_file_out
+			print 'Plot Input: ' + run_file_out
+			print 'Plot Output: ' + clade_file_out
 			subprocess.call(['plot_cladogram.py', run_file_out, clade_file_out, '--format', 'png', '--dpi', '300'])
 
 		print('\n')

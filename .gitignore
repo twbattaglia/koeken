@@ -1,5 +1,5 @@
 
 koeken/lefse_src/hclust2/*.hg
-*.i
-
 koeken/lefse_src/hclust2/.hgtags
+build/
+dist/*
