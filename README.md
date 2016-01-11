@@ -1,5 +1,24 @@
 # koeken
-Linear Discriminant Analysis (LEfSe) on A Longitudinal Microbial Dataset.
+Linear Discriminant Analysis (LEfSe) on a Longitudinal Microbial Dataset.
+
+
+### Installing Koeken
+Because Koeken needs scripts found within the QIIME package, it is easiest to use when you are in a MacQIIME session. If you have MacQIIME installed, you ***MUST*** first initialize it before installing Koeken. If you do not have macqiime installed, you can still run koeken as long as you have the scripts available in your path. See http://qiime.org/install/install.html for more information.  
+```shell
+macqiime
+```
+Run the command below while in a ***Macqiime*** session. The command should install new R packages. If you do not have R installed, please see https://cran.r-project.org/, and install the package first before running.  
+```shell
+pip install https://github.com/twbattaglia/koeken/zipball/master
+koeken.py --help
+```
+
+### Simple Example
+In this example we have a typical wokflow using koeken. We have an otu table in .biom format, a mapping text file, and an output folder to place the results. The ```--class``` parameter corresponds to the column name which describes the different groups in your mapping file. The ```--split``` parameter corresponds to the column name which describes the different timepoints in your data. ```--clade``` will produce cladograms from 
+```shell
+koeken.py --input otu_table.biom --output output_folder/ --map mapping_file.txt --class Treatment --split Day --clade
+```
+
 
 ### Introduction
 Koeken is a tool developed to speed up the process of analyzing microbial community data with LEfSe, when starting with a QIIME .biom OTU table. A typical workflow of processing a .biom file into a lefse-ready format is as follows.
@@ -7,7 +26,7 @@ Koeken is a tool developed to speed up the process of analyzing microbial commun
 1. Run summarize_taxa.py on the biom table with your mapping file to create a relative abundance table with all sample metadata.
 2. Open excel and remove the metadata columns you do not need and leave only metadata for class and subclass
 3. Convert ; to | within the taxonomy names
-4. Upload to Galaxy-Lefse and analyze (format, run, graph)
+4. Upload to Galaxy-LEfSe and analyze (format, run, graph)
 
 Now this workflow may seem simple, but when you have longitudinal dataset with 12 different timepoint and 4 different groups, its becomes a very tedious task. You will need to repeat this process over and over manually subsetting the groups. This is where koeken comes into play. Koeken is just a simple fancy ```for``` loop which iterates over all the different groups found in your 'Time' variable and runs all the processing steps found above.
 
@@ -36,34 +55,9 @@ Big thank you to the LEfSe group:
 Nicola Segata, Jacques Izard, Levi Waldron, Dirk Gevers, Larisa Miropolsky, Wendy S Garrett, and Curtis Huttenhower  
 Genome Biology, 12:R60, 2011  
 
-### Installing Dependencies
-Koeken is heavily dependent upon the QIIME and LEfSe tools. Because koeken is basicaly a wrapper for the connection between these two tools, it requires the depencies found in both. If you have MacQIIME already installed you have everything you need for the QIIME side. LEfSe on the other hand requires a few R packages. If you dont already have R, you will need to go install it first before running the commands below. (). After you have R installed you can run the command below, which will install the necessary dependencies required by LEfSe. First you will need to open a new Terminal window. Then copy and paste the two commands below. You may see some errors regarding the 'splines' and 'stats4' packages. You can ignore these warnings. Once the command is run and everything is properly installed, exit out of the Terminal window and open a new one to install Koeken.
-
-```shell
-R -e "install.packages(c('splines','stats4','survival','mvtnorm','modeltools','coin','MASS'), repos = 'http://cran.stat.ucla.edu')"
-```  
 
 
-### Installing Koeken
-Because Koeken needs scripts found within the QIIME package, it is easiest to use when you are in a MacQIIME session. If you have MacQIIME installed, you must first initialize it before installing Koeken, so that it is placed in the correct location. If you do not have macqiime installed, you can still run koeken. You will just need to have the scripts available in your path, or if you dont have qiime installed and you also dont have MacQIIME, installing koeken will install qiime for you, but be aware that it can take quite a bit of time to install all of qiime and it's dependencies using 'pip'.  
-```shell
-macqiime
-```
-
-Once you have initialized a new macqiime session, you can now go ahead and install koeken! Run the command below while in a macqiime session and it should install relatively quickly. To verify the installation was completed, you can run the second command found below which runs the scripts' help command. If you see options/parameters, you're good to go!
-```shell
-pip install https://github.com/twbattaglia/koeken/zipball/master
-koeken.py --help
-```
-
-### Simple Example
-In this example we have a typical wokflow using koeken. We have an otu table in .biom format, a mapping text file, and an output folder to place the results. The ```--class``` parameter corresponds to the column name which describes the different groups in your mapping file. The ```--split``` parameter corresponds to the column name which describes the different timepoints in your data.  
-```shell
-koeken --input otu_table.biom --output output_folder/ --map mapping_file.txt --class Treatment --split Day
-```
-
-
-### Usage
+### Parameters
 ```shell
 usage: koeken.py [-h] [-v] -i INPUT -o OUTPUT -m MAP [-l {2,3,4,5,6,7}] -cl
                  CLASSID [-sc SUBCLASSID] [-su SUBJECTID] [-p P_CUTOFF]
