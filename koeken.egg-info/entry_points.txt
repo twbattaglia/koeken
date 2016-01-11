@@ -1,3 +1,0 @@
-[console_scripts]
-koeken = koeken.koeken:main
-

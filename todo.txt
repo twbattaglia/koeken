@@ -1,7 +1,8 @@
-# todo
-- add pretty_lefse into koeken script
+# todo for 0.2.2
 - add table for all timepoints
 - add more package dependency verification
+- install R packages during install?
+- pretty_lefse.py integration
 - export2graphlan.py support
 - add more run_lefse.py analysis parameters
 - better logging features
