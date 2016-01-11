@@ -34,11 +34,6 @@ setuptools.setup(
 
 
     scripts=['koeken/koeken.py', 'koeken/lefse_src/format_input.py', 'koeken/lefse_src/run_lefse.py', 'koeken/lefse_src/lefse.py', 'koeken/lefse_src/plot_cladogram.py', 'koeken/lefse_src/export2graphlan.py', 'koeken/lefse_src/hclust2/hclust2.py', 'koeken/pretty_lefse.py'],
-
-    entry_points={
-        'console_scripts':
-            ['koeken = koeken.koeken:main']
-    },
                  
     cmdclass={'install': CustomInstallPackages},
 
