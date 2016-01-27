@@ -12,7 +12,7 @@
 __author__ = 'Thomas W. Battaglia'
 __copyright__ = 'Copyright 2015'
 __license__ = 'BSD'
-__version__ = '0.2.2'
+__version__ = '0.2.3'
 __email__ = 'tb1280@nyu.edu'
 __status__ = 'Development'
 
@@ -24,7 +24,7 @@ import glob
 import argparse
 import subprocess
 import re
-#import pretty_lefse as pl
+import logging
 
 try:
 	import pandas as pd
@@ -39,19 +39,17 @@ except ImportError:
 	'Use either MacQIIME or """pip install qiime""" before running the command. If using MacQIIME, start the macqiime environment first before running the command.')
 
 
-
-
-
 def get_args():
 	"""Gets arguments from command line inputs"""
 	parser = argparse.ArgumentParser(description = 'Performs Linear Discriminant Analysis (LEfSe) on A Longitudinal Dataset.', add_help = True)
 	parser.add_argument('-v', '--version', action = 'version', version = __version__)
+	parser.add_argument('-d', '--debug', action = 'store_true', dest = "debug", help = 'Enable debugging', default = False)
 
 
 	"""Arguments for summarize_taxa.py inputs"""
-	parser.add_argument('-i', '--input', action = "store", dest = "input", help = 'Location of the OTU Table for main analysis. (Must be .biom format)', required = True, type=str)
-	parser.add_argument('-o', '--output', action = "store", dest = "output", help = 'Location of the folder to place all resulting files. If folder does not exist, the program will create it.', required = True, type=str)
-	parser.add_argument('-m', '--map', action = "store", dest = "map", help = 'Location of the mapping file associated with OTU Table.', required = True, type=str)
+	parser.add_argument('-i', '--input', action = "store", dest = "input_biom", help = 'Location of the OTU Table for main analysis. (Must be .biom format)', required = True, type=str)
+	parser.add_argument('-o', '--output', action = "store", dest = "outputDir", help = 'Location of the folder to place all resulting files. If folder does not exist, the program will create it.', required = True, type=str)
+	parser.add_argument('-m', '--map', action = "store", dest = "map_fp", help = 'Location of the mapping file associated with OTU Table.', required = True, type=str)
 	parser.add_argument('-l', '--level', action = "store", dest = "level", default = 6, help = 'Level for which to use for summarize_taxa.py. [default = 6]', type=int, choices=[2,3,4,5,6,7])
 
 
@@ -68,69 +66,98 @@ def get_args():
 
 
 	"""Arguments for organizing data"""
-	parser.add_argument('-c', '--compare', action = "store", dest = "compare", default = "NA", nargs = '+', help = 'Which groups should be kept to be compared against one another. [default = all factors]', required = False, type = str)
+	parser.add_argument('-c', '--compare', action = "store", dest = "compare", default = "", nargs = '+', help = 'Which groups should be kept to be compared against one another. [default = all factors]', required = False, type=str)
 	parser.add_argument('-sp', '--split', action = "store", dest = "split", default = "NA", help = 'The name of the timepoint variable in you mapping file. This variable will be used to split the table for each value in this variable.', required = True, type = str)
 
 
 	"""Arguments for other types of analyses"""
-	parser.add_argument('-pc', '--clade', action = "store_true", dest = "clade", help = 'Plot Lefse Cladogram for each output time point. Outputs are placed in a new folder created in the lefse results location. Default file type in (.png)', default = False)
-	parser.add_argument('-g', '--graphlan', action = "store_true", dest = "graphlan", help = 'Convert LEfSe Results to Graphlan compatible tree (Experimental)', default = False)
-
-    #parser.add_argument('-py', '--pretty', action = "store_true", dest = "pretty", help = 'Enable this option if you would like to generate a pretty lefse table from the results. This table will consist of a table of all LEfSe results across each longitudinal timepoint and the corresponding effect size. This command can currently only work with 2 groups. See the github page for more information.', default = True)
-
-    #parser.add_argument('-con', '--control', action = "store", dest = "plcontrol", help = 'Enable this option if you would like to generate a pretty lefse table from the results. This table will consist of a table of all LEfSe results across each longitudinal timepoint and the corresponding effect size. This command can currently only work with 2 groups. See the github page for more information.')
+	parser.add_argument('-pc', '--clade', action = "store_true", dest = "clade", help = 'Plot Lefse Cladogram for each output time point. Outputs are placed in a new folder created in the lefse results location.', default = False)
+	parser.add_argument('-it', '--image', action = "store", dest = "image", type=str, help = 'Set the file type for the image create when using cladogram setting', default = 'png', choices=["png", "pdf", "svg"])
 
 	return parser.parse_args()
 
 
+def main(args):
 
+	""" Koeken Arguments """
+	input_biom = args.input_biom
+	output_dir = args.outputDir
+	map_fp = args.map_fp
+	level = args.level
+	classid = args.classid
+	subclassid = args.subclassid
+	subjectid = args.subjectid
+	compare = args.compare
+	split = args.split
 
-def main(input, output, map, level, classid, subclassid, subjectid, compare, split, p_cutoff, lda_cutoff, strictness, clade, graphlan):
-	"""Run QIIME's summarize_taxa.py command to generate relative abundance tables with associated metadata.
-	Then split the table by input parameter and """
+	""" LEfSe options """
+	p_cutoff = args.p_cutoff
+	lda_cutoff = args.lda_cutoff
+	strictness = args.strictness
+
+	""" Plot Cladogram options """
+	clade = args.clade
+	image = args.image
 
 	"""Check to see if output directories exist or not and create them."""
-	if not os.path.exists(output):
-		os.makedirs(output)
+	if not os.path.exists(output_dir):
+		os.makedirs(output_dir)
 	else:
-		print "Output folder already exists. Warning: Errors may be produced."
-		print "Please delete or change output folder before running again!. "+ '\n'
+		logging.warning('Output folder already exists. Warning: Errors may be produced. Please delete or change output folder before running again!.'+ '\n')
+
+	""" Start Logging """
+	logging.basicConfig(level=logging.INFO,
+			format='%(asctime)s %(levelname)-8s %(message)s',
+			datefmt='%a, %d %b %Y %H:%M:%S',
+			filename=output_dir + '/log.out',
+			filemode='w')
+
+	''' Write argument to file '''
+	logging.info('Input BIOM: '  + input_biom)
+	logging.info('Output Folder: ' + output_dir)
+	logging.info('Class: ' + classid)
+	logging.info('Splitting table by: ' + split)
+	logging.info('Level: ' + str(level))
+	logging.info('Comparing: ' + str(compare))
+	logging.info('P-vlaue cutoff: ' + str(p_cutoff))
+	logging.info('Effect Size Cutoff: ' + str(lda_cutoff))
+	logging.info('Plot Cladogram: ' + str(clade))
+	logging.info('Image Type: ' + str(image))
 
 	"""Output location from summarize_taxa.py step"""
-	sumtaxa_dir = '{}/{}{}/'.format(output, "summarize_taxa_L", str(level))
+	sumtaxa_dir = '{}/{}{}/'.format(output_dir, "summarize_taxa_L", str(level))
 	if not os.path.exists(sumtaxa_dir):
 		os.makedirs(sumtaxa_dir)
+		logging.info('Made directory: ' + sumtaxa_dir)
 
 	"""Output location for all LEfSe analyses"""
-	lefse_dir = '{}/{}'.format(output, "lefse_output")
+	lefse_dir = '{}/{}'.format(output_dir, "lefse_output")
 	if not os.path.exists(lefse_dir):
 		os.makedirs(lefse_dir)
+		logging.info('Made directory: ' + lefse_dir)
 
 	"""Output location for LEfSe formatting step"""
 	format_dir = '{}/{}/'.format(lefse_dir, "format_lefse")
 	if not os.path.exists(format_dir):
 		os.makedirs(format_dir)
+		logging.info('Made directory: ' + format_dir)
 
 	"""Output location for LEfSe analysis step"""
 	run_dir = '{}/{}/'.format(lefse_dir, "run_lefse")
 	if not os.path.exists(run_dir):
 		os.makedirs(run_dir)
+		logging.info('Made directory: ' + run_dir)
 
 	"""Output location for LEfSe Cladogram step"""
 	if clade == True:
 		clado_dir = '{}/{}/'.format(run_dir, "cladograms")
 		if not os.path.exists(clado_dir):
 			os.makedirs(clado_dir)
-
-	"""Output location for Pretty-LEfSe step"""
-    #pretty_dir = '{}/{}'.format(lefse_dir, "pretty_lefse")
-    #if not os.path.exists(pretty_dir):
-    #os.makedirs(pretty_dir)
-
+			logging.info('Made directory: ' + clado_dir)
 
 	"""Run summarize_taxa.py command"""
 	print "Running QIIME's summarize_taxa.py... "+ '\n'
-	summarize_cmd = "summarize_taxa.py -i %s -o %s -m %s -L %d -d '|'" % (input, sumtaxa_dir, map, level)
+	summarize_cmd = "summarize_taxa.py -i %s -o %s -m %s -L %d -d '|'" % (input_biom, sumtaxa_dir, map_fp, level)
 	subprocess.call(shlex.split(summarize_cmd))
 
 	"""Get filename of generated summarize_taxa.py outputs"""
@@ -138,7 +165,7 @@ def main(input, output, map, level, classid, subclassid, subjectid, compare, spl
 
 	"""Create panda dataframes from summarize_taxa output file and mapping file"""
 	sumtaxa_df = pd.read_table(sumtaxa_loc[0])
-	map_df = pd.read_table(map)
+	map_df = pd.read_table(map_fp)
 
 
 	"""Find the cols and respective positions for input variables on the table."""
@@ -157,11 +184,9 @@ def main(input, output, map, level, classid, subclassid, subjectid, compare, spl
 		subclassID_pos = sumtaxa_df.columns.get_loc(subclassid)
 		to_keep = [subjectID_pos, classID_pos, subclassID_pos] + bacteria_pos
 
-
 	"""Subset the data if particular group comparisons are given"""
-	if compare != "NA":
-		sumtaxa_df = sumtaxa_df[sumtaxa_df[str(classid)].isin(compare)]
-
+	if compare != "":
+		sumtaxa_df = sumtaxa_df[sumtaxa_df[classid].isin(compare)]
 
 	""" Remove greengenes taxa names to makeit prettier """
 	sumtaxa_df = sumtaxa_df.rename(columns = lambda x: re.sub('.__', '', x))
@@ -177,65 +202,37 @@ def main(input, output, map, level, classid, subclassid, subjectid, compare, spl
 
 		"""Run format_input.py from LEfSe package"""
 		format_file_out = format_dir + os.path.basename(table_out).replace('_input.txt', '_format.txt')
-		print 'Timepoint: ' + str(name)
-		print 'Formatting Table...'
-		print 'Formatting Input: ' + table_out
-		print 'Formatting Output: ' + format_file_out
+		logging.info('Timepoint ' + str(name))
+		logging.info('Formatting Table...')
+		logging.info('Formatting Input: ' + table_out)
+		logging.info('Formatting Output: ' + format_file_out)
+
 		if subclassid == "NA":
 			subprocess.call(['format_input.py', table_out, format_file_out, '-u 1', '-c 2', '-o 1000000', '-f', 'r'])
 		else:
 			subprocess.call(['format_input.py', table_out, format_file_out, '-u 1', '-c 2', '-s 3', '-o 1000000', '-f', 'r'])
 
-
 		"""Run run_lefse.py from LEfSe package"""
 		run_file_out = run_dir + os.path.basename(format_file_out).replace('_format.txt', '.txt')
-		print 'Running Analysis...'
-		print 'Analysis Input: ' + format_file_out
-		print 'Analysis Output: ' + run_file_out
+		logging.info('Running Analysis...')
+		logging.info('Analysis Input: ' + format_file_out)
+		logging.info('Analysis Output: ' + run_file_out)
 		subprocess.call(['run_lefse.py', format_file_out, run_file_out, '-a', str(p_cutoff), '-l', str(lda_cutoff), '-y', str(strictness)])
-
 
 		"""Check to see if cladogram option was chosen"""
 		if clade == True:
 			"""Run plot_cladogram.py from LEfSe package"""
-			clade_file_out = clado_dir + os.path.basename(format_file_out).replace('_format.txt', '.png')
-			print 'Plotting Cladogram...'
-			print 'Plot Input: ' + run_file_out
-			print 'Plot Output: ' + clade_file_out
-			subprocess.call(['plot_cladogram.py', run_file_out, clade_file_out, '--format', 'png', '--dpi', '300'])
+			clade_file_out = clado_dir + os.path.basename(format_file_out).replace('_format.txt', '.' + image)
+			logging.info('Plotting Cladogram...')
+			logging.info('Plot Input: ' + run_file_out)
+			logging.info('Plot Output: ' + clade_file_out)
+			subprocess.call(['plot_cladogram.py', run_file_out, clade_file_out, '--format', image, '--dpi', '300'])
 
+		''' Formatting '''
 		print('\n')
 
-
-		#"""Check to see if graphlan option was chosen"""
-		#if graphlan == True:
-			#"""Convert files to graphlan compatibile files"""
-			#clade_file_out = run_dir + os.path.basename(format_file_out).replace('_format.txt', '.png')
-			#print 'Convert to Graphlan Format...'
-			#print 'Graphlan Input: ' + run_file_out
-			#print 'Graphlan Output Folder: ' + clade_file_out
-
-			#subprocess.call(['export2graphlan.py', run_file_out, table_out, '--annotations', '2,3', 'png', '--external_annotations', '4,5,6', --fname_row 0])
-
-
-		#export2graphlan.py -i hmp_aerobiosis_small.txt -o hmp_aerobiosis_small.res -t tree.txt -a annot.txt --title "HMP aerobiosis" --annotations 2,3 --external_annotations 4,5,6 --fname_row 0 --skip_rows 1,2 --ftop 200
-
-
-		#"""Run Analysis on all combined timepoints"""
-		#print 'Timepoint: All'
-		#all_table = sumtaxa_df.iloc[:,to_keep]
-		#print 'Formatting Table...'
-		#print 'Formatting Input: ' + table_out
-		#print 'Formatting Output: ' + format_file_out
-
-
-    #print "Running Pretty LEfSe..."
-    #frames = [ pl.process_table(file_loc = f, write_values = False, output = pretty_dir, control = pl_control) #for f in glob.glob(run_dir + "/*.txt") ]
-    #result = pd.concat(frames, axis = 1)
-    #result.to_csv(pretty_dir + "/pretty_table.txt", sep = '\t', header = True, index = True)
-	print 'Analysis Completed.'
-
-
+	''' Print finished analysis '''
+	logging.info('Analysis Completed.')
 
 
 if __name__ == '__main__':
@@ -244,7 +241,7 @@ if __name__ == '__main__':
 	args = get_args()
 
 	"""Credits"""
-	print "Koeken" + ' v' + __version__ + ': ' + "Linear Discriminant Analysis (LEfSe) on A Longitudinal Microbial Dataset."
+	print "Koeken" + ' v' + __version__ + ': ' + "Linear Discriminant Analysis (LEfSe) on a Longitudinal Microbial Dataset."
 	print 'Written by ' + __author__ + ' (' + __email__ + ')' + '\n'
 	print 'LEfSe Credits: "Metagenomic biomarker discovery and explanation"'
 	print 'Nicola Segata, Jacques Izard, Levi Waldron, Dirk Gevers, Larisa Miropolsky, Wendy S Garrett, and Curtis Huttenhower'
@@ -252,13 +249,17 @@ if __name__ == '__main__':
 
 
 	"""Error Check to see if class/subclass/split metadata columns exist in the mapping file"""
-	map_chk = pd.read_table(args.map)
+	map_chk = pd.read_table(args.map_fp)
+
 	if str(args.classid) not in map_chk.columns.values.tolist():
 		raise ValueError('Warning. There is no class variable with that column name in your mapping file. Please verify the class ID chosen is actually a column name in your mapping file.')
+
 	if str(args.split) not in map_chk.columns.values.tolist():
 		raise ValueError('Warning. There is no split variable with that column name in your mapping file. Please verify the subclass ID chosen is actually a column name in your mapping file.')
 
+	if(args.compare) != "":
+		if (len(args.compare) == 1):
+			raise ValueError("Warning. Comparison needs to be in the format of Group1 Group2. Do not use any separators ")
 
 	"""Run command"""
-	main(args.input, args.output, args.map, args.level, args.classid, args.subclassid, args.subjectid, args.compare, args.split, args.p_cutoff, args.lda_cutoff, args.strictness, args.clade, args.graphlan)
-    #args.pretty, args.plcontrol)
+	main(args)

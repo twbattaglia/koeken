@@ -1,9 +1,0 @@
-# todo
-- add pretty_lefse into koeken script
-- add table for all timepoints
-- add more package dependency verification
-- export2graphlan.py support
-- add more run_lefse.py analysis parameters
-- better logging features
-- better way to install lefse
-- two group comparison option for classes with 2+ groups

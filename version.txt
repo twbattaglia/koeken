@@ -1,3 +1,10 @@
+# Version 0.2.3 (1/27/16)
+- Removed old commented code
+- remove unused arguments
+- updated argument interpreter
+- implemented a logging system
+- fixed individual comparisons bug not working
+
 # Version 0.2.2 (1/11/16)
 - added pretty_lefse.py to make combined tables
 - added R package installation within setup.py
@@ -8,8 +15,7 @@
 - added option --clade to plot lefse cladogram with default settings.
 - removed koeken console script
 - added more code to eventually add pretty lefse
-- fixed bug that wouldnt print numerical timepoints
-
+- fixed bug that wouldn’t print numerical time points
 
 # Version 0.2.0 (8/15/15)
 - complete rewrite of script

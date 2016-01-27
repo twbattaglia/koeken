@@ -15,10 +15,8 @@ __version__ = '0.0.1'
 __email__ = 'tb1280@nyu,edu'
 __status__ = 'Development'
 
-import pandas as pd
 import glob
 import argparse
-import numpy as np
 import os
 import re
 try:
@@ -26,6 +24,12 @@ try:
 except ImportError:
 	raise ImportError('The module """pandas"" was not found. '
 	'Please install with """pip install pandas""" and try again')
+
+try:
+	import numpy as np
+except ImportError:
+	raise ImportError('The module """numpy"" was not found. '
+	'Please install with """pip install numpy""" and try again')
 
 
 def get_args():
