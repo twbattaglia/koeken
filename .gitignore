@@ -5,3 +5,5 @@ build/*
 dist/*
 test/*
 koeken.egg-info/*
+
+todo.txt
