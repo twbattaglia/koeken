@@ -16,7 +16,13 @@ koeken.py --help
 ### Simple Example
 In this example we have a typical wokflow using koeken. We have an otu table in .biom format, a mapping text file, and an output folder to place the results. The ```--class``` parameter corresponds to the column name which describes the different groups in your mapping file. The ```--split``` parameter corresponds to the column name which describes the different timepoints in your data. ```--clade``` will produce cladograms from 
 ```shell
-koeken.py --input otu_table.biom --output output_folder/ --map mapping_file.txt --class Treatment --split Day --clade
+koeken.py \
+--input otu_table.biom \
+--output output_folder/ \
+--map mapping_file.txt \
+--class Treatment \
+--split Day \
+--clade
 ```
 
 
