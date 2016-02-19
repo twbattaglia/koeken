@@ -22,7 +22,7 @@ class CustomInstallPackages(install):
 # Pkg info
 setuptools.setup(
     name="koeken",
-    version="0.2.3",
+    version="0.2.4",
     url="https://github.com/twbattaglia/koeken",
 
     author="Thomas W. Battaglia",
@@ -34,7 +34,7 @@ setuptools.setup(
 
 
     scripts=['koeken/koeken.py', 'koeken/lefse_src/format_input.py', 'koeken/lefse_src/run_lefse.py', 'koeken/lefse_src/lefse.py', 'koeken/lefse_src/plot_cladogram.py', 'koeken/lefse_src/export2graphlan.py', 'koeken/lefse_src/hclust2/hclust2.py', 'koeken/pretty_lefse.py'],
-                 
+
     cmdclass={'install': CustomInstallPackages},
 
     packages=setuptools.find_packages(),
@@ -50,4 +50,3 @@ setuptools.setup(
         'Programming Language :: Python :: 3.4'
     ]
 )
-

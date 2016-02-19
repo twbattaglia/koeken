@@ -12,7 +12,7 @@
 __author__ = 'Thomas W. Battaglia'
 __copyright__ = 'Copyright 2015'
 __license__ = 'BSD'
-__version__ = '0.2.3'
+__version__ = '0.2.4'
 __email__ = 'tb1280@nyu.edu'
 __status__ = 'Development'
 
@@ -72,7 +72,8 @@ def get_args():
 
 	"""Arguments for other types of analyses"""
 	parser.add_argument('-pc', '--clade', action = "store_true", dest = "clade", help = 'Plot Lefse Cladogram for each output time point. Outputs are placed in a new folder created in the lefse results location.', default = False)
-	parser.add_argument('-it', '--image', action = "store", dest = "image", type=str, help = 'Set the file type for the image create when using cladogram setting', default = 'png', choices=["png", "pdf", "svg"])
+	parser.add_argument('-it', '--image', action = "store", dest = "image", type=str, help = 'Set the file type for the image create when using cladogram setting', default = 'pdf', choices=["png", "pdf", "svg"])
+	parser.add_argument('-dp', '--dpi', action = "store", dest = "dpi", type=int, help = 'Set DPI resolution for cladogram', default = 300)
 
 	return parser.parse_args()
 
@@ -98,6 +99,7 @@ def main(args):
 	""" Plot Cladogram options """
 	clade = args.clade
 	image = args.image
+	dpi = args.dpi
 
 	"""Check to see if output directories exist or not and create them."""
 	if not os.path.exists(output_dir):
@@ -119,7 +121,7 @@ def main(args):
 	logging.info('Splitting table by: ' + split)
 	logging.info('Level: ' + str(level))
 	logging.info('Comparing: ' + str(compare))
-	logging.info('P-vlaue cutoff: ' + str(p_cutoff))
+	logging.info('P-value cutoff: ' + str(p_cutoff))
 	logging.info('Effect Size Cutoff: ' + str(lda_cutoff))
 	logging.info('Plot Cladogram: ' + str(clade))
 	logging.info('Image Type: ' + str(image))
@@ -167,7 +169,6 @@ def main(args):
 	sumtaxa_df = pd.read_table(sumtaxa_loc[0])
 	map_df = pd.read_table(map_fp)
 
-
 	"""Find the cols and respective positions for input variables on the table."""
 	""" Row 1 = Subject"""
 	""" Row 2 = Class"""
@@ -197,8 +198,9 @@ def main(args):
 
 		"""Write Input tables to file"""
 		table = group.iloc[:,to_keep].transpose()
+		table_filtered = table.loc[~(table==0).all(axis=1)]
 		table_out = '{}{}{}'.format(sumtaxa_dir, name, '_input.txt')
-		table.to_csv(table_out, sep = '\t', header = False, index = True)
+		table_filtered.to_csv(table_out, sep = '\t', header = False, index = True)
 
 		"""Run format_input.py from LEfSe package"""
 		format_file_out = format_dir + os.path.basename(table_out).replace('_input.txt', '_format.txt')
@@ -226,7 +228,7 @@ def main(args):
 			logging.info('Plotting Cladogram...')
 			logging.info('Plot Input: ' + run_file_out)
 			logging.info('Plot Output: ' + clade_file_out)
-			subprocess.call(['plot_cladogram.py', run_file_out, clade_file_out, '--format', image, '--dpi', '300'])
+			subprocess.call(['plot_cladogram.py', run_file_out, clade_file_out, '--format', image, '--dpi', str(dpi)])
 
 		''' Formatting '''
 		print('\n')
@@ -259,7 +261,7 @@ if __name__ == '__main__':
 
 	if(args.compare) != "":
 		if (len(args.compare) == 1):
-			raise ValueError("Warning. Comparison needs to be in the format of Group1 Group2. Do not use any separators ")
+			raise ValueError("Warning. Comparison needs to be in the format of Group1 Group2. Do not use any separators.")
 
 	"""Run command"""
 	main(args)

@@ -1,5 +1,10 @@
+# Version 0.2.4 (2/18/16)
+- now removes all rows with 0 sums
+- added dpi option for cladogram
+- default now pdf for cladogram
+
 # Version 0.2.3 (1/27/16)
-- Removed old commented code
+- removed old commented code
 - remove unused arguments
 - updated argument interpreter
 - implemented a logging system
