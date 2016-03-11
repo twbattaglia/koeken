@@ -39,7 +39,7 @@ setuptools.setup(
 
     packages=setuptools.find_packages(),
 
-    install_requires=['rpy2', 'numpy', 'matplotlib', 'argparse', 'pandas', 'biopython', 'qiime'],
+    install_requires=['rpy2', 'argparse', 'pandas', 'biopython', 'qiime'],
 
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
