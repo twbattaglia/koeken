@@ -1,6 +1,6 @@
 Metadata-Version: 1.1
 Name: koeken
-Version: 0.2.4
+Version: 0.2.5
 Summary: Linear Discriminant Analysis (LEfSe) on a Longitudinal Microbial Dataset.
 Home-page: https://github.com/twbattaglia/koeken
 Author: Thomas W. Battaglia

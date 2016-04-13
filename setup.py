@@ -22,7 +22,7 @@ class CustomInstallPackages(install):
 # Pkg info
 setuptools.setup(
     name="koeken",
-    version="0.2.4",
+    version="0.2.5",
     url="https://github.com/twbattaglia/koeken",
 
     author="Thomas W. Battaglia",

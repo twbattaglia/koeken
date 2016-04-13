@@ -7,6 +7,7 @@ Because Koeken needs scripts found within the QIIME package, it is easiest to us
 ```shell
 macqiime
 ```
+
 Run the command below while in a ***Macqiime*** session. The command should install new R packages. If you do not have R installed, please see https://cran.r-project.org/, and install the package first before running.  
 ```shell
 pip install https://github.com/twbattaglia/koeken/zipball/master
@@ -14,7 +15,7 @@ koeken.py --help
 ```
 
 ### Simple Example
-In this example we have a typical wokflow using koeken. We have an otu table in .biom format, a mapping text file, and an output folder to place the results. The ```--class``` parameter corresponds to the column name which describes the different groups in your mapping file. The ```--split``` parameter corresponds to the column name which describes the different timepoints in your data. ```--clade``` will produce cladograms from 
+In this example we have a typical workflow using koeken. We have an otu-table in .biom format, a mapping text file, and an output folder to place the results. The ```--class``` parameter corresponds to the column name which describes the different groups in your mapping file. The ```--split``` parameter corresponds to the column name which describes the different timepoints in your data. ```--clade``` will produce cladograms from
 ```shell
 koeken.py \
 --input otu_table.biom \
@@ -48,7 +49,10 @@ output_folder/
 ---lefse_output  
 -------format_lefse  
 -------run_lefse  
-    
+
+
+#### Using output files on Galaxy-LEfSe
+If you want to use the galaxy version of LEfSe to generate figures, you can use the provided output from Koeken. During file upload you must select ```lefse_res``` for the files in the 'run_lefse/' folder and must select ```lefse_for``` for the files in the 'format_lefse/'.
 
 
 #### Credits
@@ -65,23 +69,26 @@ Genome Biology, 12:R60, 2011
 
 ### Parameters
 ```shell
-usage: koeken.py [-h] [-v] -i INPUT -o OUTPUT -m MAP [-l {2,3,4,5,6,7}] -cl
-                 CLASSID [-sc SUBCLASSID] [-su SUBJECTID] [-p P_CUTOFF]
-                 [-e LDA_CUTOFF] [-str {0,1}] [-c COMPARE [COMPARE ...]] -sp
-                 SPLIT [-pc] [-g]
+usage: koeken.py [-h] [-v] [-d] -i INPUT_BIOM -o OUTPUTDIR -m MAP_FP
+                 [-l {2,3,4,5,6,7}] -cl CLASSID [-sc SUBCLASSID]
+                 [-su SUBJECTID] [-p P_CUTOFF] [-e LDA_CUTOFF] [-str {0,1}]
+                 [-c COMPARE [COMPARE ...]] -sp SPLIT [-pc]
+                 [-it {png,pdf,svg}] [-dp DPI] [-pi]
 
 Performs Linear Discriminant Analysis (LEfSe) on A Longitudinal Dataset.
 
 optional arguments:
   -h, --help            show this help message and exit
   -v, --version         show program's version number and exit
-  -i INPUT, --input INPUT
+  -d, --debug           Enable debugging
+  -i INPUT_BIOM, --input INPUT_BIOM
                         Location of the OTU Table for main analysis. (Must be
                         .biom format)
-  -o OUTPUT, --output OUTPUT
+  -o OUTPUTDIR, --output OUTPUTDIR
                         Location of the folder to place all resulting files.
                         If folder does not exist, the program will create it.
-  -m MAP, --map MAP     Location of the mapping file associated with OTU
+  -m MAP_FP, --map MAP_FP
+                        Location of the mapping file associated with OTU
                         Table.
   -l {2,3,4,5,6,7}, --level {2,3,4,5,6,7}
                         Level for which to use for summarize_taxa.py. [default
@@ -101,7 +108,8 @@ optional arguments:
                         2.0).
   -str {0,1}, --strict {0,1}
                         Change the strictness of the comparisons. Can be
-                        changed to less strict(1). [default = 0](more-strict).
+                        changed to less strict (1). [default = 0](more-
+                        strict).
   -c COMPARE [COMPARE ...], --compare COMPARE [COMPARE ...]
                         Which groups should be kept to be compared against one
                         another. [default = all factors]
@@ -111,7 +119,12 @@ optional arguments:
                         for each value in this variable.
   -pc, --clade          Plot Lefse Cladogram for each output time point.
                         Outputs are placed in a new folder created in the
-                        lefse results location. Default file type in (.png)
-  -g, --graphlan        Convert LEfSe Results to Graphlan compatible tree
-                        (Experimental)
+                        lefse results location.
+  -it {png,pdf,svg}, --image {png,pdf,svg}
+                        Set the file type for the image create when using
+                        cladogram setting
+  -dp DPI, --dpi DPI    Set DPI resolution for cladogram
+  -pi, --picrust        Run analysis with PICRUSt biom file. Must use the
+                        cateogirze by function level 3. Next updates will
+                        reflect the difference levels.
 ```

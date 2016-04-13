@@ -12,7 +12,7 @@
 __author__ = 'Thomas W. Battaglia'
 __copyright__ = 'Copyright 2015'
 __license__ = 'BSD'
-__version__ = '0.2.4'
+__version__ = '0.2.5'
 __email__ = 'tb1280@nyu.edu'
 __status__ = 'Development'
 
@@ -62,7 +62,7 @@ def get_args():
 	"""Arguments for LEfSe discriminant analysis"""
 	parser.add_argument('-p', '--pval', action = "store", dest = "p_cutoff", default = 0.05, help = 'Change alpha value for the Anova test (default 0.05)')
 	parser.add_argument('-e','--effect', action = "store", dest = "lda_cutoff", default = 2, help = 'Change the cutoff for logarithmic                  LDA score (default 2.0).', type = float)
-	parser.add_argument('-str', '--strict', action = "store", dest = "strictness", default = 0, choices=[0,1], help = 'Change the strictness of the comparisons. Can be changed to less strict(1). [default = 0](more-strict).', type = int)
+	parser.add_argument('-str', '--strict', action = "store", dest = "strictness", default = 0, choices=[0,1], help = 'Change the strictness of the comparisons. Can be changed to less strict (1). [default = 0](more-strict).', type = int)
 
 
 	"""Arguments for organizing data"""
@@ -74,6 +74,7 @@ def get_args():
 	parser.add_argument('-pc', '--clade', action = "store_true", dest = "clade", help = 'Plot Lefse Cladogram for each output time point. Outputs are placed in a new folder created in the lefse results location.', default = False)
 	parser.add_argument('-it', '--image', action = "store", dest = "image", type=str, help = 'Set the file type for the image create when using cladogram setting', default = 'pdf', choices=["png", "pdf", "svg"])
 	parser.add_argument('-dp', '--dpi', action = "store", dest = "dpi", type=int, help = 'Set DPI resolution for cladogram', default = 300)
+	parser.add_argument('-pi', '--picrust', action = "store_true", dest = "picrust", help = 'Run analysis with PICRUSt biom file. Must use the cateogirze by function level 3. Next updates will reflect the difference levels.', default = False)
 
 	return parser.parse_args()
 
@@ -125,6 +126,7 @@ def main(args):
 	logging.info('Effect Size Cutoff: ' + str(lda_cutoff))
 	logging.info('Plot Cladogram: ' + str(clade))
 	logging.info('Image Type: ' + str(image))
+	logging.info('PICRUSt: ' + str(args.picrust))
 
 	"""Output location from summarize_taxa.py step"""
 	sumtaxa_dir = '{}/{}{}/'.format(output_dir, "summarize_taxa_L", str(level))
@@ -159,11 +161,18 @@ def main(args):
 
 	"""Run summarize_taxa.py command"""
 	print "Running QIIME's summarize_taxa.py... "+ '\n'
-	summarize_cmd = "summarize_taxa.py -i %s -o %s -m %s -L %d -d '|'" % (input_biom, sumtaxa_dir, map_fp, level)
+	if args.picrust:
+		summarize_cmd = "summarize_taxa.py -i %s -o %s -m %s -L 3 -d '|' --md_identifier 'KEGG_Pathways' " % (input_biom, sumtaxa_dir, map_fp)
+	else:
+		summarize_cmd = "summarize_taxa.py -i %s -o %s -m %s -L %d -d '|'" % (input_biom, sumtaxa_dir, map_fp, level)
+
 	subprocess.call(shlex.split(summarize_cmd))
 
 	"""Get filename of generated summarize_taxa.py outputs"""
-	sumtaxa_loc = glob.glob(sumtaxa_dir + '*_L'+ str(level) +'.txt')
+	if args.picrust:
+		sumtaxa_loc = glob.glob(sumtaxa_dir + '*_L3' +'.txt')
+	else:
+		sumtaxa_loc = glob.glob(sumtaxa_dir + '_L*'+ str(level) +'.txt')
 
 	"""Create panda dataframes from summarize_taxa output file and mapping file"""
 	sumtaxa_df = pd.read_table(sumtaxa_loc[0])
@@ -228,7 +237,11 @@ def main(args):
 			logging.info('Plotting Cladogram...')
 			logging.info('Plot Input: ' + run_file_out)
 			logging.info('Plot Output: ' + clade_file_out)
-			subprocess.call(['plot_cladogram.py', run_file_out, clade_file_out, '--format', image, '--dpi', str(dpi)])
+
+			if args.picrust:
+				subprocess.call(['plot_cladogram.py', run_file_out, clade_file_out, '--format', image, '--dpi', str(dpi)])
+			else:
+				subprocess.call(['plot_cladogram.py', run_file_out, clade_file_out, '--labeled_start_lev', '3', '--labeled_stop_lev', '3', '--format', image, '--dpi', str(dpi)])
 
 		''' Formatting '''
 		print('\n')
@@ -248,7 +261,6 @@ if __name__ == '__main__':
 	print 'LEfSe Credits: "Metagenomic biomarker discovery and explanation"'
 	print 'Nicola Segata, Jacques Izard, Levi Waldron, Dirk Gevers, Larisa Miropolsky, Wendy S Garrett, and Curtis Huttenhower'
 	print 'Genome Biology, 12:R60, 2011'+ '\n'
-
 
 	"""Error Check to see if class/subclass/split metadata columns exist in the mapping file"""
 	map_chk = pd.read_table(args.map_fp)
