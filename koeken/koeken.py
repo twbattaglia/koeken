@@ -172,7 +172,7 @@ def main(args):
 	if args.picrust:
 		sumtaxa_loc = glob.glob(sumtaxa_dir + '*_L3' +'.txt')
 	else:
-		sumtaxa_loc = glob.glob(sumtaxa_dir + '_L*'+ str(level) +'.txt')
+		sumtaxa_loc = glob.glob(sumtaxa_dir + '/*_L*'+ str(level) +'.txt')
 
 	"""Create panda dataframes from summarize_taxa output file and mapping file"""
 	sumtaxa_df = pd.read_table(sumtaxa_loc[0])
