@@ -238,10 +238,7 @@ def main(args):
 			logging.info('Plot Input: ' + run_file_out)
 			logging.info('Plot Output: ' + clade_file_out)
 
-			if args.picrust:
-				subprocess.call(['plot_cladogram.py', run_file_out, clade_file_out, '--format', image, '--dpi', str(dpi)])
-			else:
-				subprocess.call(['plot_cladogram.py', run_file_out, clade_file_out, '--labeled_start_lev', '3', '--labeled_stop_lev', '3', '--format', image, '--dpi', str(dpi)])
+			subprocess.call(['plot_cladogram.py', run_file_out, clade_file_out, '--format', image, '--dpi', str(dpi)])
 
 		''' Formatting '''
 		print('\n')
