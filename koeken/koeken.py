@@ -239,7 +239,7 @@ def main(args):
 			logging.info('Plot Output: ' + clade_file_out)
 
 			subprocess.call(['plot_cladogram.py', run_file_out, clade_file_out, '--format', image, '--dpi', str(dpi)])
-			
+        
 		''' Formatting '''
 		print('\n')
 
