@@ -22,15 +22,15 @@ class CustomInstallPackages(install):
 # Pkg info
 setuptools.setup(
     name="koeken",
-    version="0.2.5",
+    version="0.2.6",
     url="https://github.com/twbattaglia/koeken",
 
     author="Thomas W. Battaglia",
     author_email="tb1280@nyu.edu",
 
-    description="Linear Discriminant Analysis (LEfSe) on a Longitudinal Microbial Dataset.",
+    description="A Linear Discriminant Analysis (LEfSe) wrapper.",
     long_description=open('README.rst').read(),
-    keywords="Biology Microbiome LEFSE QIIME Formatting Diversity Python Bioinformatics",
+    keywords="Biology Microbiome LEfSe QIIME Formatting Diversity Python Bioinformatics",
 
 
     scripts=['koeken/koeken.py', 'koeken/lefse_src/format_input.py', 'koeken/lefse_src/run_lefse.py', 'koeken/lefse_src/lefse.py', 'koeken/lefse_src/plot_cladogram.py', 'koeken/lefse_src/export2graphlan.py', 'koeken/lefse_src/hclust2/hclust2.py', 'koeken/pretty_lefse.py'],

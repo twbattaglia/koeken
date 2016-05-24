@@ -1,6 +1,6 @@
 # koeken
 (koo-ken)
-Linear Discriminant Analysis (LEfSe) on a Longitudinal Microbial Dataset.
+A Linear Discriminant Analysis (LEfSe) wrapper.
 
 
 ### Installing Koeken

@@ -12,7 +12,7 @@
 __author__ = 'Thomas W. Battaglia'
 __copyright__ = 'Copyright 2015'
 __license__ = 'BSD'
-__version__ = '0.2.5'
+__version__ = '0.2.6'
 __email__ = 'tb1280@nyu.edu'
 __status__ = 'Development'
 
@@ -172,7 +172,7 @@ def main(args):
 	if args.picrust:
 		sumtaxa_loc = glob.glob(sumtaxa_dir + '*_L3' +'.txt')
 	else:
-		sumtaxa_loc = glob.glob(sumtaxa_dir + '/*_L*'+ str(level) +'.txt')
+		sumtaxa_loc = glob.glob(sumtaxa_dir + '/*_L'+ str(level) +'.txt')
 
 	"""Create panda dataframes from summarize_taxa output file and mapping file"""
 	sumtaxa_df = pd.read_table(sumtaxa_loc[0])
@@ -200,6 +200,7 @@ def main(args):
 
 	""" Remove greengenes taxa names to makeit prettier """
 	sumtaxa_df = sumtaxa_df.rename(columns = lambda x: re.sub('.__', '', x))
+	sumtaxa_df = sumtaxa_df.rename(columns = lambda x: re.sub(' ', '_', x))
 
 	"""For each timepoint, remove unwanted columns and perform LEfSe analysis"""
 	grouped_df = sumtaxa_df.groupby(str(split))
@@ -238,8 +239,8 @@ def main(args):
 			logging.info('Plot Input: ' + run_file_out)
 			logging.info('Plot Output: ' + clade_file_out)
 
-			subprocess.call(['plot_cladogram.py', run_file_out, clade_file_out, '--format', image, '--dpi', str(dpi)])
-        
+			subprocess.call(['plot_cladogram.py', run_file_out, clade_file_out, '--format', image, '--dpi', str(dpi), '--title', str(name)])
+
 		''' Formatting '''
 		print('\n')
 
