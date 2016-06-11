@@ -1,7 +1,7 @@
 Metadata-Version: 1.1
 Name: koeken
-Version: 0.2.5
-Summary: Linear Discriminant Analysis (LEfSe) on a Longitudinal Microbial Dataset.
+Version: 0.2.6
+Summary: A Linear Discriminant Analysis (LEfSe) wrapper.
 Home-page: https://github.com/twbattaglia/koeken
 Author: Thomas W. Battaglia
 Author-email: tb1280@nyu.edu
@@ -46,7 +46,7 @@ Description: koeken
         -------
         `koeken` was written by `Thomas W. Battaglia <tb1280@nyu.edu>`_.
         
-Keywords: Biology Microbiome LEFSE QIIME Formatting Diversity Python Bioinformatics
+Keywords: Biology Microbiome LEfSe QIIME Formatting Diversity Python Bioinformatics
 Platform: UNKNOWN
 Classifier: Development Status :: 2 - Pre-Alpha
 Classifier: Programming Language :: Python
