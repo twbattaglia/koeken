@@ -1,5 +1,4 @@
 # koeken
-(koo-ken)
 A Linear Discriminant Analysis (LEfSe) wrapper.
 
 
