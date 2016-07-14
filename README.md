@@ -43,12 +43,14 @@ Koeken is a wrapper around QIIME and LEfSe to create a more convienient and easi
 ### Outputs
 Koeken generates many intermediate files as it iterates over each time point. For each timepoint, koeken runs a QIIME command (summarize_taxa.py), LEfSe formatting and LEfSe significance tests, but each of the steps are separated into their respective folders to minimize confusion. A breakdown of the folders are shown below.
   
+```
 output_folder/  
-* summarize_taxa/ (Output from running QIIME commands)  
-* lefse_output/ (Root folder for storing LEfSe outputs)
-** format_lefse/ (Output from running LEfSe formatting command)
-** run_lefse/ (Output from running main LEfSe command) 
+|--summarize_taxa/ (Output from running QIIME commands)  
+|--lefse_output/ (Root folder for storing LEfSe outputs)
+|----format_lefse/ (Output from running LEfSe formatting command)
+|----run_lefse/ (Output from running main LEfSe command) 
 
+```
 ### Using Output Files on Galaxy-LEfSe Application
 If you want to use the galaxy version of LEfSe to generate figures, you can use the provided output from koeken. During file upload you must select ```lefse_res``` for the files in the 'run_lefse/' folder and must select ```lefse_for``` for the files in the 'format_lefse/'.
 
