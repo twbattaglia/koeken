@@ -127,3 +127,12 @@ optional arguments:
                         cateogirze by function level 3. Next updates will
                         reflect the difference levels.
 ```
+
+
+### Features for the future
+- [ ] install LEfSe files separately and much better
+- [ ] add results table for a combined all time points analysis
+- [ ] add more package dependency verification
+- [ ] export2graphlan.py support
+- [ ] add more run_lefse.py parameters
+- [ ] add more plot_cladogram.py parameters
