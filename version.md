@@ -1,5 +1,10 @@
+#### Version 0.2.6 (5/24/16)
+- fixes issues with PICRUSt plotting
+- added titles to cladograms
+- minor fixes to installation errors
+
 #### Version 0.2.5 (4/12/16)
-- added PICRUSy support
+- added PICRUSt support
 
 #### Version 0.2.4 (2/18/16)
 - now removes all rows with 0 sums
