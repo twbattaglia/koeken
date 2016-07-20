@@ -6,4 +6,7 @@ python:
   - "3.3"
   - "3.4"
   - "3.5"
-install: "pip install -r requirements.txt"
+before_install:
+  - pip install rpy2 pandas biopython argparse
+install:
+  - "pip install -e ."
