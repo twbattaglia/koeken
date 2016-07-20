@@ -32,7 +32,6 @@ setuptools.setup(
     long_description=open('README.rst').read(),
     keywords="Biology Microbiome LEfSe QIIME Formatting Diversity Python Bioinformatics",
 
-
     scripts=['koeken/koeken.py', 'koeken/lefse_src/format_input.py', 'koeken/lefse_src/run_lefse.py', 'koeken/lefse_src/lefse.py', 'koeken/lefse_src/plot_cladogram.py', 'koeken/lefse_src/hclust2/hclust2.py', 'koeken/pretty_lefse.py'],
 
     cmdclass={'install': CustomInstallPackages},
