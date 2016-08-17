@@ -1,5 +1,6 @@
 # koeken
-A Linear Discriminant Analysis (LEfSe) wrapper.
+A Linear Discriminant Analysis (LEfSe) wrapper.  
+[![Build Status](https://travis-ci.org/twbattaglia/koeken.svg?branch=master)](https://travis-ci.org/twbattaglia/koeken)
 
 
 ### Installing Koeken
