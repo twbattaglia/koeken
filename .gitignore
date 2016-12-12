@@ -7,3 +7,5 @@ test/*
 koeken.egg-info/*
 
 todo.txt
+
+snippets.py

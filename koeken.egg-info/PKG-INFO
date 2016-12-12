@@ -1,56 +1,20 @@
 Metadata-Version: 1.1
 Name: koeken
-Version: 0.2.6
-Summary: A Linear Discriminant Analysis (LEfSe) wrapper.
+Version: 0.3.0
+Summary: A Linear Discriminant Analysis effect size (LEfSe) wrapper.
 Home-page: https://github.com/twbattaglia/koeken
 Author: Thomas W. Battaglia
 Author-email: tb1280@nyu.edu
 License: UNKNOWN
-Description: koeken
-        ======
-        
-        .. image:: https://pypip.in/v/koeken/badge.png
-            :target: https://pypi.python.org/pypi/koeken
-            :alt: Latest PyPI version
-        
-        .. image:: https://travis-ci.org/twbattaglia/koeken.png
-           :target: https://travis-ci.org/twbattaglia/koeken
-           :alt: Latest Travis CI build status
-        
-        Linear Discriminant Analysis (LEfSe) on A Longitudinal Microbial Dataset.
-        
-        Usage
-        -----
-        
-        Installation
-        ------------
-        
-        Requirements
-        ^^^^^^^^^^^^
-        qiime
-        numpy
-        matplotlib
-        argparse
-        pandas
-        biopython
-        
-        
-        Compatibility
-        -------------
-        
-        
-        Licence
-        -------
-        
-        Authors
-        -------
-        `koeken` was written by `Thomas W. Battaglia <tb1280@nyu.edu>`_.
-        
-Keywords: Biology Microbiome LEfSe QIIME Formatting Diversity Python Bioinformatics
-Platform: UNKNOWN
-Classifier: Development Status :: 2 - Pre-Alpha
+Description: UNKNOWN
+Keywords: microbial,microbiome,bioinformatics,LEfSe,metagenomic,QIIME,koeken,biology
+Platform: Linux
+Platform: MacOS
 Classifier: Programming Language :: Python
-Classifier: Programming Language :: Python :: 2
+Classifier: Development Status :: 2 - Pre-Alpha
+Classifier: Environment :: Console
+Classifier: Operating System :: MacOS
+Classifier: Operating System :: Unix
 Classifier: Programming Language :: Python :: 2.7
-Classifier: Programming Language :: Python :: 3
 Classifier: Programming Language :: Python :: 3.4
+Classifier: Topic :: Scientific/Engineering :: Bio-Informatics

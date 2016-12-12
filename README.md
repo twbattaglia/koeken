@@ -1,5 +1,5 @@
 # koeken
-A Linear Discriminant Analysis (LEfSe) wrapper.  
+A Linear Discriminant Analysis Effect Size (LEfSe) wrapper.  
 
 
 ### Installing Koeken
@@ -24,11 +24,11 @@ koeken.py \
 --map mapping_file.txt \
 --class Treatment \
 --split Day \
---clade 
+--clade
 ```
 
 ### Introduction
-Koeken is a wrapper around QIIME and LEfSe to create a more convienient and easier workflow from a QIIME OTU table to biomarker microbial species. It was specifically developed for the experiments which have more than one time point and many groups. Koeken allows the user to specify the variable which correspond to the 'Time' of a users dataset to run LEfSe on each 'Time' factor. Additionally it has the capabilities to specify particular groups to compare to one another, without any additionally subsetting. 
+Koeken is a wrapper around QIIME and LEfSe to create a more convienient and easier workflow from a QIIME OTU table to biomarker microbial species. It was specifically developed for the experiments which have more than one time point and many groups. Koeken allows the user to specify the variable which correspond to the 'Time' of a users dataset to run LEfSe on each 'Time' factor. Additionally it has the capabilities to specify particular groups to compare to one another, without any additionally subsetting.
 
 ### Features
 * Run LEfSe over many time points
@@ -42,13 +42,13 @@ Koeken is a wrapper around QIIME and LEfSe to create a more convienient and easi
 
 ### Outputs
 Koeken generates many intermediate files as it iterates over each time point. For each timepoint, koeken runs a QIIME command (summarize_taxa.py), LEfSe formatting and LEfSe significance tests, but each of the steps are separated into their respective folders to minimize confusion. A breakdown of the folders are shown below.
-  
+
 ```
 output_folder/  
 |--summarize_taxa/ (Output from running QIIME commands)  
 |--lefse_output/ (Root folder for storing LEfSe outputs)
 |----format_lefse/ (Output from running LEfSe formatting command)
-|----run_lefse/ (Output from running main LEfSe command) 
+|----run_lefse/ (Output from running main LEfSe command)
 
 ```
 ### Using Output Files on Galaxy-LEfSe Application

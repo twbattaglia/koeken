@@ -1,4 +1,3 @@
-README.rst
 setup.py
 koeken/__init__.py
 koeken/koeken.py
@@ -6,9 +5,9 @@ koeken/pretty_lefse.py
 koeken.egg-info/PKG-INFO
 koeken.egg-info/SOURCES.txt
 koeken.egg-info/dependency_links.txt
+koeken.egg-info/entry_points.txt
 koeken.egg-info/requires.txt
 koeken.egg-info/top_level.txt
-koeken/lefse_src/export2graphlan.py
 koeken/lefse_src/format_input.py
 koeken/lefse_src/lefse.py
 koeken/lefse_src/plot_cladogram.py

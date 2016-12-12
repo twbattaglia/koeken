@@ -1,51 +1,38 @@
-import setuptools
-from setuptools.command.install import install
+"""
+Koeken setup
 
+To run: python setup.py install
 
-# Install Necessary R packages
-class CustomInstallPackages(install):
-    """Customized setuptools install command - runs R package install one-liner."""
-    def run(self):
-        import subprocess
-        import shlex
-        print "Attempting to install R packages...Please wait."
-        cmd =''' R -e "install.packages(c('optparse', 'gtools', 'klaR','survival', 'mvtnorm', 'modeltools', 'coin', 'MASS'), repos = 'http://cran.stat.ucla.edu')" '''
-        try:
-            subprocess.call(shlex.split(cmd))
-            print "Necessary R packages were sucessfully installed"
-        except:
-            print "Error installing R dependecies! Check to see if R is properly installed or see online documentation for more answers."
-        install.run(self)
-
-
+"""
+try:
+    import setuptools
+except ImportError:
+    sys.exit("Please install setuptools.")
 
 # Pkg info
 setuptools.setup(
     name="koeken",
-    version="0.2.6",
+    version="0.3.0",
     url="https://github.com/twbattaglia/koeken",
-
     author="Thomas W. Battaglia",
     author_email="tb1280@nyu.edu",
-
-    description="A Linear Discriminant Analysis (LEfSe) wrapper.",
-    long_description=open('README.rst').read(),
-    keywords="Biology Microbiome LEfSe QIIME Formatting Diversity Python Bioinformatics",
-
-    scripts=['koeken/koeken.py', 'koeken/lefse_src/format_input.py', 'koeken/lefse_src/run_lefse.py', 'koeken/lefse_src/lefse.py', 'koeken/lefse_src/plot_cladogram.py', 'koeken/lefse_src/hclust2/hclust2.py', 'koeken/pretty_lefse.py'],
-
-    cmdclass={'install': CustomInstallPackages},
-
-    packages=setuptools.find_packages(),
-
-    install_requires=['rpy2', 'argparse', 'pandas', 'biopython'],
-
+    description="A Linear Discriminant Analysis effect size (LEfSe) wrapper.",
+    keywords=['microbial', 'microbiome', 'bioinformatics', 'LEfSe',
+              'metagenomic', 'QIIME', 'koeken', 'biology'],
+    platforms=['Linux', 'MacOS'],
     classifiers=[
+        "Programming Language :: Python",
         'Development Status :: 2 - Pre-Alpha',
-        'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4'
-    ]
+        "Environment :: Console",
+        "Operating System :: MacOS",
+        "Operating System :: Unix",
+        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3.4",
+        "Topic :: Scientific/Engineering :: Bio-Informatics"],
+    entry_points={
+        'console_scripts': [
+            'koeken = koeken.koeken:main',
+            'pretty_lefse = humann2.tools.humann2_databases:main']},
+    packages=setuptools.find_packages(),
+    install_requires=['rpy2', 'argparse', 'pandas', 'biopython']
 )

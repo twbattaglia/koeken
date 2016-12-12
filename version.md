@@ -1,3 +1,6 @@
+#### Version 0.3.0 (X/X/XX)
+
+
 #### Version 0.2.6 (5/24/16)
 - fixes issues with PICRUSt plotting
 - added titles to cladograms
