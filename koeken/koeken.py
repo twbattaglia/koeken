@@ -5,10 +5,9 @@
 	A Linear Discriminant Analysis effect size (LEfSe) wrapper.
 	:copyright: (c) 2016 by Thomas W. Battaglia.
 	:license: BSD, see LICENSE for more details.
-
 """
 __author__ = 'Thomas W. Battaglia'
-__copyright__ = 'Copyright 2015'
+__copyright__ = 'Copyright 2016'
 __license__ = 'BSD'
 __version__ = '0.3.0'
 __email__ = 'tb1280@nyu.edu'
@@ -19,11 +18,10 @@ Koeken (command-line LEfSe)
 Run LEfSe on multiple times.
 """
 
+import util
 import sys
 import argparse
 import pandas
-#import qiime
-
 
 
 # ---------------------------------------------------------------
@@ -41,34 +39,37 @@ def parse_arguments():
 		version="%(prog)s v"+ __version__)
     parser.add_argument(
         "-i", "--input",
+		dest="input_fp",
         metavar="<path>",
 		type=str,
-        #required=True,
+        required=True,
         help="Path to OTU/PICRUSt or humann2 feature table.")
     parser.add_argument(
         "-o", "--output",
+		dest="output_dir",
         metavar="<path>",
         type=str,
-		#required=True,
+		required=True,
         help="Folder path to output files.")
     parser.add_argument(
         "-m", "--mapping",
         metavar="<path>",
 		type=str,
-        #required=True,
+        required=True,
         help="Path to sample metadata.")
     parser.add_argument(
         "-f", "--format",
         metavar="<str>",
 		type=str,
 		choices=["qiime", "picrust", "humann2"],
-        #required=True,
+        required=True,
         help="Path to sample metadata. Must specifiy the type of input. Can be of type (qiime, picrust, humann2) ")
 
 	# Metadata Params
     parser.add_argument(
         "--class",
         metavar="<string>",
+		dest="classid",
         type=str,
         help="Class-definition")
     parser.add_argument(
@@ -106,7 +107,14 @@ def parse_arguments():
         metavar="<int>",
         type=int,
 		choices=[2, 3, 4, 5, 6, 7],
-        help="Level-definition")
+		default=6,
+        help="Level 1 = Kingdom (e.g Bacteria)\n"
+			 "Level 2 = Phylum (e.g Actinobacteria)\n"
+			 "Level 3 = Class (e.g Actinobacteria)\n"
+			 "Level 4 = Order (e.g Actinomycetales)\n"
+			 "Level 5 = Family (e.g Streptomycetaceae)\n"
+			 "Level 6 = Genus (e.g Streptomyces)\n"
+	    	 "Level 7 = Species (e.g mirabilis)\n")
 
 	# LEfSe Options
     parser.add_argument(
@@ -142,8 +150,8 @@ def parse_arguments():
     parser.add_argument(
         "--dpi",
 		metavar="<int>",
-        type=int,
-		default=300,
+		type=int,
+    	default=300,
         help="DPI definition")
     args = parser.parse_args()
     return args
@@ -153,9 +161,31 @@ def parse_arguments():
 # main
 # ---------------------------------------------------------------
 def main():
-    args=parse_arguments()
-	
+	print("\n=================================================================")
+	print("koeken" + ' v' + __version__)
+	print('Written by ' + __author__ + ' (' + __email__ + ')' + '\n')
+	print('LEfSe Publication: "Metagenomic biomarker discovery and explanation"')
+	print('Nicola Segata, Jacques Izard, Levi Waldron, Dirk Gevers, \n' +
+	'Larisa Miropolsky, Wendy S Garrett, and Curtis Huttenhower')
+	print('Genome Biology, 12:R60, 2011')
+	print("==================================================================\n")
+
+	# Get arguments
+	args = parse_arguments()
+
+	# Check data for errors
+
+	# Create folders to store output
+	util.create_dir(args.output_dir)
+	util.create_dir(args.output_dir + "/formatted")
+	util.create_dir(args.output_dir + "/results")
+	util.create_dir(args.output_dir + "/split_tables")
+	#util.create_dir(args.output_dir + "/cladograms")
+
+	# Run summarize taxa on BIOM file
+	if args.format == "qiime" or args.format == "picrust":
+		util.summarize_taxa(args)
 
 
-if __name__ == "__main__":
-    main()
+if __name__ == '__main__':
+	main()

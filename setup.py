@@ -27,7 +27,6 @@ setuptools.setup(
         "Operating System :: MacOS",
         "Operating System :: Unix",
         "Programming Language :: Python :: 2.7",
-        "Programming Language :: Python :: 3.4",
         "Topic :: Scientific/Engineering :: Bio-Informatics"],
     entry_points={
         'console_scripts': [

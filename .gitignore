@@ -3,11 +3,6 @@ koeken/lefse_src/hclust2/*.hg
 koeken/lefse_src/hclust2/.hgtags
 build/*
 dist/*
-test/*
 koeken.egg-info/*
-
-todo.txt
-
-snippets.py
-
-koeken/koeken copy.py
+*.pyc
+dev/
