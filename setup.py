@@ -30,8 +30,8 @@ setuptools.setup(
         "Topic :: Scientific/Engineering :: Bio-Informatics"],
     entry_points={
         'console_scripts': [
-            'koeken = koeken.koeken:main',
-            'pretty_lefse = humann2.tools.humann2_databases:main']},
+            'koeken = koeken.koeken:main'
+        ]},
     packages=setuptools.find_packages(),
-    install_requires=['rpy2', 'argparse', 'pandas', 'biopython']
+    install_requires=['rpy2', 'argparse', 'pandas', 'biopython', 'lefse']
 )

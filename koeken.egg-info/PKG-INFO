@@ -16,5 +16,4 @@ Classifier: Environment :: Console
 Classifier: Operating System :: MacOS
 Classifier: Operating System :: Unix
 Classifier: Programming Language :: Python :: 2.7
-Classifier: Programming Language :: Python :: 3.4
 Classifier: Topic :: Scientific/Engineering :: Bio-Informatics

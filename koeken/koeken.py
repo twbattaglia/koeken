@@ -64,7 +64,7 @@ def parse_arguments():
 		type=str,
 		choices=["qiime", "picrust", "humann2"],
         required=True,
-        help="Path to sample metadata. Must specifiy the type of input. Can be of type (qiime, picrust, humann2) ")
+        help="Must specifiy the type of input. Can be of type <qiime, picrust, humann2> ")
 
 	# Metadata Params
     parser.add_argument(
@@ -297,6 +297,3 @@ def main():
 				print('=========================================================\n')
 	else:
 		print("Running humann2 workflow")
-
-if __name__ == '__main__':
-	main()

@@ -6,7 +6,7 @@ before_install:
   - wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh
   - chmod +x miniconda.sh
   - ./miniconda.sh -b
-  - export PATH=/home/travis/miniconda3/bin:$PATH
+  - export PATH=/home/travis/miniconda2/bin:$PATH
 install:
   - conda config --add channels bioconda
   - conda create --yes -n test-env -c bioconda python=$PYTHON_VERSION qiime=1.9.1 pandas rpy2 biopython
