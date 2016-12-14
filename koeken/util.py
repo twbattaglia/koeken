@@ -17,31 +17,35 @@ from biom import load_table
 
 
 def summarize_taxa(args):
-	print("Running summarize taxa...")
 	summarize_fp = args.output_dir + "/summarize_taxa.txt"
 	otu_table = load_table(args.input_fp)
 	mapping_file = open(args.mapping, 'U')
 	mapping, header, comments = parse_mapping_file(mapping_file)
 
-	# Change settings for file format
 	if args.format == "picrust":
-		print("PICRUST sum taxa")
-		#summary, tax_order = add_summary_mapping(otu_table, mapping, 3,
-		#c_md_as_string, "KEGG_Pathways")
+
+		# Collapse table by phylogeny level
+		print("Summarizing PICRUSt functions...")
+		summary, tax_order = add_summary_mapping(otu_table, mapping, 3,
+		False, "KEGG_Pathways")
+
+		# Write file to disk
+		write_add_taxa_summary_mapping(summary, tax_order, mapping,
+		header, summarize_fp , "|")
 
 	elif args.format == "qiime":
-		# Normalize OTU table
+
+		# Collapse table by phylogeny level
 		otu_table = otu_table.norm(axis = 'sample', inplace = False)
 
 		# Summarize taxa grouping
+		print("Summarizing OTU table")
 		summary, tax_order = add_summary_mapping(otu_table, mapping,
 		args.level, False, "taxonomy")
 
 		# Write file to disk
 		write_add_taxa_summary_mapping(summary, tax_order, mapping,
 									   header, summarize_fp , "|")
-		# Message sucess
-		print("Sucessfully wrote file to disk...")
 	else:
 		ValueError('Warning. humann2 is not supported in this function.')
 
@@ -55,19 +59,19 @@ def create_dir(path):
 		print('Created directory: ' + path)
 
 def check_map(args):
-	map_chk = pd.read_table(mapping)
+	map_chk = pd.read_table(args.mapping)
 
 	# Err if no class ID in mapping file columns
 	if str(args.classid) not in map_chk.columns.values.tolist():
 		raise ValueError('Warning. There is no class variable with that column '
-		'name in your mapping file. Please verify the class ID chosen is '
-		'actually a column name in your mapping file.')
+		'name in your mapping file. Please verify the class ID chosen exists '
+		'as a column name in your mapping file.')
 
 	# Err if no variable to split by
 	if str(args.split) not in map_chk.columns.values.tolist():
 		raise ValueError('Warning. There is no split variable with that '
-		'column name in your mapping file. Please verify the subclass ID '
-		'chosen is actually a column name in your mapping file.')
+		'column name in your mapping file. Please verify the splitting ID '
+		'chosen exists as a column name in your mapping file.')
 
 	# Err if comparison param did not use spaces.
 	if(args.compare) != '':

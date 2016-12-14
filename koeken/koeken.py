@@ -89,7 +89,8 @@ def parse_arguments():
 		"--compare",
         metavar="<string>",
         type=str,
-		nargs = '+',
+		default="",
+		nargs='+',
         help="Compare-definition")
     parser.add_argument(
         "--split",
@@ -172,20 +173,23 @@ def main():
 
 	# Get arguments
 	args = parse_arguments()
+	print(args)
 
 	# Check data for errors
+	util.check_map(args)
 
 	# Create folders to store output
 	util.create_dir(args.output_dir)
 	util.create_dir(args.output_dir + "/formatted")
 	util.create_dir(args.output_dir + "/results")
 	util.create_dir(args.output_dir + "/split_tables")
-	#util.create_dir(args.output_dir + "/cladograms")
+	if args.clade:
+		util.create_dir(args.output_dir + "/cladograms")
 
 	# Run summarize taxa on BIOM file
 	if args.format == "qiime" or args.format == "picrust":
 		util.summarize_taxa(args)
-
+		
 
 if __name__ == '__main__':
 	main()
