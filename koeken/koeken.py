@@ -20,8 +20,9 @@ Run LEfSe on multiple times.
 
 import util
 import sys
+import re
 import argparse
-import pandas
+import pandas as pd
 
 
 # ---------------------------------------------------------------
@@ -189,7 +190,38 @@ def main():
 	# Run summarize taxa on BIOM file
 	if args.format == "qiime" or args.format == "picrust":
 		util.summarize_taxa(args)
-		
+
+		# Import data as a pandas dataframe
+		sumtbl_df = pd.read_table(args.output_dir + "/summarize_table.txt")
+		map_df = pd.read_table(args.mapping)
+
+		# Find the cols and respective positions for input variables in the table.
+		### Row 1 = Subject
+		### Row 2 = Class
+		### Row 3 = Subclass/None
+		### Row 4-: = Bacteria/Features...
+		subjectID_pos = sumtbl_df.columns.get_loc(args.subject)
+		classID_pos = sumtbl_df.columns.get_loc(args.classid)
+		bacteria_pos = range(( len(map_df.columns) ), len(sumtbl_df.columns))
+
+		# Cases for addition of subject class
+		if args.subclass is None:
+			to_keep = [subjectID_pos, classID_pos] + bacteria_pos
+		else:
+			subclassID_pos = sumtbl_df.columns.get_loc(args.subclass)
+			to_keep = [subjectID_pos, classID_pos, subclassID_pos] + bacteria_pos
+
+		# Subset the data if particular group comparisons are given
+		if args.compare != "":
+			sumtbl_df=sumtbl_df[sumtbl_df[args.classid].isin(args.compare)]
+
+		# Remove greengenes taxa names to makeit prettier
+		if args.format=="qiime":
+			sumtbl_df=sumtbl_df.rename(columns=lambda x: re.sub('.__', '', x))
+			sumtbl_df=sumtbl_df.rename(columns=lambda x: re.sub(' ', '_', x))
+
+		# Split table to iterate over multiple timepoints
+		grouped_df = sumtbl_df.groupby(str(args.split))
 
 if __name__ == '__main__':
 	main()

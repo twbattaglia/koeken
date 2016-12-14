@@ -17,7 +17,7 @@ from biom import load_table
 
 
 def summarize_taxa(args):
-	summarize_fp = args.output_dir + "/summarize_taxa.txt"
+	summarize_fp = args.output_dir + "/summarize_table.txt"
 	otu_table = load_table(args.input_fp)
 	mapping_file = open(args.mapping, 'U')
 	mapping, header, comments = parse_mapping_file(mapping_file)
@@ -39,7 +39,7 @@ def summarize_taxa(args):
 		otu_table = otu_table.norm(axis = 'sample', inplace = False)
 
 		# Summarize taxa grouping
-		print("Summarizing OTU table")
+		print("Summarizing OTU table...")
 		summary, tax_order = add_summary_mapping(otu_table, mapping,
 		args.level, False, "taxonomy")
 
