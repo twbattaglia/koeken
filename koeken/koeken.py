@@ -82,7 +82,7 @@ def parse_arguments():
         "--subject",
         metavar="<string>",
         type=str,
-		default = '#SampleID',
+		default='#SampleID',
         help="Subject-definition")
 
 	# Splitting Params
@@ -98,6 +98,11 @@ def parse_arguments():
         metavar="<string>",
         type=str,
         help="Split-definition")
+    parser.add_argument(
+        "--no-split",
+		dest="no_split",
+		action="store_true",
+        help="No-Split-definition")
 
 	# QIIME Params
     parser.add_argument(
@@ -119,7 +124,7 @@ def parse_arguments():
         "--pvalue",
         metavar="<float>",
         type=float,
-		default=0.5,
+		default=0.05,
         help="Pvalue-definition")
     parser.add_argument(
         "--lda",
@@ -207,51 +212,91 @@ def main():
 		if args.compare != "":
 			sumtbl_df=sumtbl_df[sumtbl_df[args.classid].isin(args.compare)]
 
-		# Remove greengenes taxa names to makeit prettier
+		# Remove greengenes taxa names to make it prettier
+		# TODO fix the double || error
 		if args.format=="qiime":
+			sumtbl_df=sumtbl_df.rename(columns=lambda x: re.sub('__$', "__unclassified", x))
 			sumtbl_df=sumtbl_df.rename(columns=lambda x: re.sub('.__', '', x))
-			sumtbl_df=sumtbl_df.rename(columns=lambda x: re.sub(' ', '_', x))
+			#sumtbl_df=sumtbl_df.rename(columns=lambda x: re.sub('|', '|', x))
 
 		# Run the analysis with all timepoints merged
 		all_split=args.output_dir + "/split_tables/all_timepoints.txt"
 		all_format=args.output_dir + "/formatted/all_timepoints.txt"
 		all_results=args.output_dir + "/results/all_timepoints.txt"
+		all_clade=args.output_dir + "/cladograms/all_timepoints."+args.image_type
+
 		sumtbl_df_tsp = sumtbl_df.iloc[:,to_keep].transpose()
 		sumtbl_df_tsp.to_csv(all_split, sep='\t', header=False, index=True)
-		util.format_lefse(all_split, all_format,
-						  name="all samples", subclass=None)
-		#util.run_lefse(all_format, all_results, args)
-		#util.plot_cladogram(current_format, current_results, args)
 
-		# Split table to iterate over multiple timepoints
-		grouped_df = sumtbl_df.groupby(str(args.split))
+		# Format data step
+		# TODO add conditonal for subclass
+		util.format_lefse(input_fp = all_split,
+						  output_fp = all_format,
+						  name = "all samples",
+						  subclass = None)
 
-		# Iterate over each splitted mapping file
-		for name, group in grouped_df:
-			#print(name)
-			current_split=args.output_dir + "/split_tables/" + str(name) + "_split.txt"
-			current_format=args.output_dir + "/formatted/" + str(name) + "_format.txt"
-			current_results=args.output_dir + "/results/" + str(name) + ".txt"
-			current_clado=args.output_dir + "/cladograms/" + str(name) + args.image_type
+		# Running lefse step
+		util.run_lefse(input_fp = all_format,
+					   output_fp = all_results,
+					   name = "all samples",
+					   args = args)
 
-			# Subset main tbale to the current working timepoint
-			table = group.iloc[:,to_keep].transpose()
-			table_filtered = table.loc[~(table==0).all(axis=1)]
+		# Plot cladogram step
+		util.plot_cladogram(input_fp = all_results,
+							output_fp = all_clade,
+							name = "all samples",
+							args = args)
 
-			# Write Input tables to file
-			table_filtered.to_csv(current_split, sep='\t',
-								  header=False, index=True)
+		# Aesthetically pleasing
+		print('=========================================================\n')
 
-			# Run format lefse command
-			util.format_lefse(current_split, current_format,
-							  name, subclass = args.subclass)
+		if not args.no_split:
+			# Split table to iterate over multiple timepoints
+			grouped_df = sumtbl_df.groupby(str(args.split))
 
-			# Run main lefse command
-			#util.run_lefse(current_format, current_results, args)
+			# Iterate over each splitted mapping file
+			for name, group in grouped_df:
+				# Set vars
+				current_split=args.output_dir + "/split_tables/" + str(name) + "_split.txt"
+				current_format=args.output_dir + "/formatted/" + str(name) + "_format.txt"
+				current_results=args.output_dir + "/results/" + str(name) + ".txt"
+				current_clado=args.output_dir + "/cladograms/" + str(name) +'.' + args.image_type
 
-			# Run cladogram (if chosen)
-			#util.plot_cladogram(current_format, current_results, args)
+				# Subset table to current working timepoint
+				table = group.iloc[:,to_keep].transpose()
 
+				# Remove any rows with 0 sums
+				table_filtered = table.loc[~(table==0).all(axis=1)]
+
+				# Write Input tables to file
+				table_filtered.to_csv(current_split,
+									  sep = '\t',
+									  header = False,
+									  index = True)
+
+				# Formatting step
+				# TODO add conditonal for subclass
+				util.format_lefse(input_fp = current_split,
+								  output_fp = current_format,
+								  name = name,
+								  subclass = None)
+
+				# Run lefse step
+				util.run_lefse(input_fp = current_format,
+							   output_fp = current_results,
+							   name = name,
+							   args = args)
+
+				# Plot cladogram step
+				util.plot_cladogram(input_fp = current_results,
+									output_fp = current_clado,
+									name = name,
+									args = args)
+
+				# Aesthetically pleasing
+				print('=========================================================\n')
+	else:
+		print("Running humann2 workflow")
 
 if __name__ == '__main__':
 	main()

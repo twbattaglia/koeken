@@ -21,6 +21,7 @@ def create_dir(path):
 	if not os.path.exists(path):
 		os.makedirs(path)
 		print('Created directory: ' + path)
+		
 
 def summarize_taxa(args):
 	summarize_fp = args.output_dir + "/summarize_table.txt"
@@ -87,15 +88,15 @@ def format_lefse(input_fp, output_fp, name, subclass=None):
 		subprocess.call(['lefse-format_input.py', input_fp, output_fp,
 						 '-u 1', '-c 2', '-o 1000000', '-f', 'r'])
 
-def run_lefse(input_fp, output_fp, args):
-	print('running lefse')
+def run_lefse(input_fp, output_fp, name, args):
+	print('Running LEfSe on: ' + str(name))
 	subprocess.call(['run_lefse.py', input_fp, output_fp,
 					 '-a', str(args.pvalue),
 					 '-l', str(args.lda),
 					 '-y', str(args.strictness)])
 
-def plot_cladogram(input_fp, output_fp, args, name):
-	print('plotting cladograms')
+def plot_cladogram(input_fp, output_fp, name, args):
+	print('Plotting cladogram for: ' + str(name))
 	subprocess.call(['lefse-plot_cladogram.py', input_fp, output_fp,
 					 '--format', args.image_type,
 					 '--dpi', str(args.dpi),
