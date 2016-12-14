@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 """
-	koeken.py
-	~~~~~~~~~
-	A Linear Discriminant Analysis effect size (LEfSe) wrapper.
-	:copyright: (c) 2016 by Thomas W. Battaglia.
-	:license: BSD, see LICENSE for more details.
+    koeken.py
+    ~~~~~~~~~
+    A Linear Discriminant Analysis effect size (LEfSe) wrapper.
+    :copyright: (c) 2016 by Thomas W. Battaglia.
+    :license: BSD, see LICENSE for more details.
 """
 __author__ = 'Thomas W. Battaglia'
 __copyright__ = 'Copyright 2016'
@@ -13,16 +13,23 @@ __version__ = '0.3.0'
 __email__ = 'tb1280@nyu.edu'
 __status__ = 'Development'
 description = """
-Koeken (command-line LEfSe)
+Koeken
 ===========================
-Run LEfSe on multiple times.
+Koeken is meant to provide integration of the LEfSe algorithm during a
+typical workflow. The statistical analysis can be applied to QIIME,
+PICRUSt or humann2 datasets, without the need to manually add metadata. It was
+developed to reduce the risk of incorrect metadata and increased the
+reproducibility of studies.
 """
 
 import util
 import sys
 import re
 import argparse
-import pandas as pd
+try:
+	import pandas as pd
+except ImportError:
+	raise ImportError('The module "pandas" could not be found.')
 
 
 # ---------------------------------------------------------------
@@ -30,129 +37,139 @@ import pandas as pd
 # ---------------------------------------------------------------
 def parse_arguments():
     parser = argparse.ArgumentParser(
-        description=description,
-		add_help=True,
-        formatter_class=argparse.RawTextHelpFormatter,
-		prog="koeken")
+        description = description,
+		add_help = True,
+        formatter_class = argparse.RawTextHelpFormatter,
+		prog = "koeken")
     parser.add_argument(
         "-v", "--version",
-        action="version",
-		version="%(prog)s v"+ __version__)
+        action = "version",
+		version = "%(prog)s v"+ __version__)
     parser.add_argument(
         "-i", "--input",
-		dest="input_fp",
-        metavar="<path>",
-		type=str,
-        required=True,
-        help="Path to OTU/PICRUSt or humann2 feature table.")
+		dest = "input_fp",
+        metavar = "<path>",
+		type = str,
+        required = True,
+        help = "File path to input feature table.\n")
     parser.add_argument(
         "-o", "--output",
-		dest="output_dir",
-        metavar="<path>",
-        type=str,
-		required=True,
-        help="Folder path to output files.")
+		dest = "output_dir",
+        metavar = "<path>",
+        type = str,
+		required = True,
+        help = "Folder path to store output files.\n")
     parser.add_argument(
         "-m", "--mapping",
-        metavar="<path>",
-		type=str,
-        required=True,
-        help="Path to sample metadata.")
+        metavar = "<path>",
+		type = str,
+        required = True,
+        help = "Path to sample metadata.")
     parser.add_argument(
         "-f", "--format",
         metavar="<str>",
-		type=str,
-		choices=["qiime", "picrust", "humann2"],
-        required=True,
-        help="Must specifiy the type of input. Can be of type <qiime, picrust, humann2> ")
+		type = str,
+		choices = ["qiime", "picrust", "humann2"],
+        required = True,
+        help = "Set format type to run analysis. Can be of type (qiime, picrust"
+			   " or humann2)")
 
 	# Metadata Params
     parser.add_argument(
         "--class",
-        metavar="<string>",
-		dest="classid",
-        type=str,
-        help="Class-definition")
+        metavar = "<string>",
+		dest = "classid",
+        type = str,
+		required = True,
+        help = "Select which variable in metadata to use as class\n")
     parser.add_argument(
         "--subclass",
-        metavar="<string>",
-        type=str,
-        help="Subclass-definition")
+        metavar = "<string>",
+        type = str,
+        help = "Select which variable in metadata to use as subclass.")
     parser.add_argument(
         "--subject",
-        metavar="<string>",
-        type=str,
-		default='#SampleID',
-        help="Subject-definition")
+        metavar = "<string>",
+        type = str,
+		default = '#SampleID',
+        help = "Select which variable in metadata to use as subject. "
+			   "[DEFAULT: first column in mapping file]")
 
 	# Splitting Params
     parser.add_argument(
 		"--compare",
-        metavar="<string>",
-        type=str,
-		default="",
-		nargs='+',
-        help="Compare-definition")
+        metavar = "<string>",
+        type = str,
+		default = "",
+		required = True,
+		nargs = '+',
+        help = "Select the factors within the class variable that you would \n"
+			   "like to compare. Be sure to use a space to separate the \n"
+			   "difference factors. (e.g Treatment1 Treatment2 Control)")
     parser.add_argument(
         "--split",
-        metavar="<string>",
-        type=str,
-        help="Split-definition")
+        metavar = "<string>",
+        type = str,
+        help = "Select which variable in metadata to split the table by. \n"
+			   "Typically this variable represents the timepoint in the data.")
     parser.add_argument(
         "--no-split",
-		dest="no_split",
-		action="store_true",
-        help="No-Split-definition")
+		dest = "no_split",
+		action = "store_true",
+        help = "Select to only compare all timepoint together [DEFAULT: False]")
 
 	# QIIME Params
     parser.add_argument(
         "-l", "--level",
-        metavar="<int>",
-        type=int,
-		choices=[2, 3, 4, 5, 6, 7],
-		default=6,
-        help="Level 1 = Kingdom (e.g Bacteria)\n"
-			 "Level 2 = Phylum (e.g Actinobacteria)\n"
-			 "Level 3 = Class (e.g Actinobacteria)\n"
-			 "Level 4 = Order (e.g Actinomycetales)\n"
-			 "Level 5 = Family (e.g Streptomycetaceae)\n"
-			 "Level 6 = Genus (e.g Streptomyces)\n"
-	    	 "Level 7 = Species (e.g mirabilis)\n")
+        metavar = "<int>",
+        type = int ,
+		choices = [2, 3, 4, 5, 6, 7],
+		default = 6,
+        help = "Level at which to collapse taxa (Only for QIIME) [DEFAULT : 6]\n"
+			   "Level 1 = Kingdom (e.g Bacteria)\n"
+			   "Level 2 = Phylum (e.g Actinobacteria)\n"
+			   "Level 3 = Class (e.g Actinobacteria)\n"
+			   "Level 4 = Order (e.g Actinomycetales)\n"
+			   "Level 5 = Family (e.g Streptomycetaceae)\n"
+			   "Level 6 = Genus (e.g Streptomyces)\n"
+	    	   "Level 7 = Species (e.g mirabilis)\n")
 
 	# LEfSe Options
     parser.add_argument(
         "--pvalue",
-        metavar="<float>",
-        type=float,
-		default=0.05,
-        help="Pvalue-definition")
+        metavar = "<float>",
+        type = float,
+		default = 0.05,
+        help = "Maximum p-value for LEfSe analysis. [DEFAULT: 0.05]" )
     parser.add_argument(
         "--lda",
-		metavar="<float>",
-        type=float,
-		default=2.0,
-        help="LDA-definition")
+		metavar = "<float>",
+        type = float,
+		default = 2.0,
+        help = "Minimum LDA score for LEfSe analysis. [DEFAULT: 2]")
     parser.add_argument(
         "--strictness",
-		metavar="<int>",
-        type=int,
-		choices=[0,1],
-		default=0,
-        help="Strictness-definition")
+		metavar = "<int>",
+        type = int,
+		choices = [0,1],
+		default = 0,
+        help = "Set the type of analysis for 2+ group comparisons. \n"
+			   "0 = All-against-all (more strict) [DEFAULT]. \n"
+			   "1 = One-against-all (less strict)")
     parser.add_argument(
         "--image-type",
-		metavar="<str>",
-		dest="image_type",
-        type=str,
-		choices=["png", "pdf", "svg"],
-		default="pdf",
-        help="Image-type definition")
+		metavar = "<str>",
+		dest = "image_type",
+        type = str,
+		choices = ["png", "pdf", "svg"],
+		default = "pdf",
+        help = "Format-type of output cladogram image. [DEFAULT: pdf] ")
     parser.add_argument(
         "--dpi",
-		metavar="<int>",
-		type=int,
-    	default=300,
-        help="DPI definition")
+		metavar = "<int>",
+		type = int,
+    	default = 300,
+        help = "Resolution of output cladogram image. [DEFAULT: 300] ")
     args = parser.parse_args()
     return args
 
@@ -168,7 +185,7 @@ def main():
 	print('Nicola Segata, Jacques Izard, Levi Waldron, Dirk Gevers, \n' +
 	'Larisa Miropolsky, Wendy S Garrett, and Curtis Huttenhower')
 	print('Genome Biology, 12:R60, 2011')
-	print("==================================================================\n")
+	print("=================================================================\n")
 
 	# Get arguments
 	args = parse_arguments()
@@ -186,18 +203,25 @@ def main():
 
 	# Run summarize taxa on BIOM file
 	if args.format == "qiime" or args.format == "picrust":
+
+		# Run summarize taxa command on BIOM file
 		util.summarize_taxa(args)
 
 		# Import data as a pandas dataframe
 		sumtbl_df = pd.read_table(args.output_dir + "/summarize_table.txt")
 		map_df = pd.read_table(args.mapping)
 
+		# Set subject ID column as first row as default
+		if args.subject != None:
+			subjectID_pos = sumtbl_df.columns.get_loc(args.subject)
+		else:
+			subjectID_pos = 1
+
 		# Find the cols and respective positions for input variables in the table.
-		### Row 1 = Subject
+		### Row 1 = Subject/First row in mapping file
 		### Row 2 = Class
 		### Row 3 = Subclass/None
 		### Row 4-: = Bacteria/Features...
-		subjectID_pos = sumtbl_df.columns.get_loc(args.subject)
 		classID_pos = sumtbl_df.columns.get_loc(args.classid)
 		bacteria_pos = range(( len(map_df.columns) ), len(sumtbl_df.columns))
 
