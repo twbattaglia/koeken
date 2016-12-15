@@ -14,12 +14,12 @@ __email__ = 'tb1280@nyu.edu'
 __status__ = 'Development'
 description = """
 Koeken
-===========================
-Koeken is meant to provide integration of the LEfSe algorithm during a
-typical workflow. The statistical analysis can be applied to QIIME,
-PICRUSt or humann2 datasets, without the need to manually add metadata. It was
-developed to reduce the risk of incorrect metadata and increased the
-reproducibility of studies.
+=================================
+This package is meant to provide better integration of the LEfSe algorithm
+into a typical metagneomic analysis workflow. The statistical analysis can be
+applied to QIIME, PICRUSt or humann2 datasets, without the need to manually
+add metadata. It was developed to reduce the risk of incorrect metadata
+and increased the reproducibility of analytical studies.
 """
 
 import util
@@ -30,6 +30,14 @@ try:
 	import pandas as pd
 except ImportError:
 	raise ImportError('The module "pandas" could not be found.')
+try:
+	import qiime
+except ImportError:
+	raise ImportError('The module "qiime" could not be found.')
+try:
+	import biom
+except ImportError:
+	raise ImportError('The module "biom-format" could not be found.')
 
 
 # ---------------------------------------------------------------
@@ -105,7 +113,7 @@ def parse_arguments():
 		nargs = '+',
         help = "Select the factors within the class variable that you would \n"
 			   "like to compare. Be sure to use a space to separate the \n"
-			   "difference factors. (e.g Treatment1 Treatment2 Control)")
+			   "different factors. (e.g Treatment1 Treatment2 Control)")
     parser.add_argument(
         "--split",
         metavar = "<string>",
@@ -179,12 +187,15 @@ def parse_arguments():
 # ---------------------------------------------------------------
 def main():
 	print("\n=================================================================")
-	print("koeken" + ' v' + __version__)
-	print('Written by ' + __author__ + ' (' + __email__ + ')' + '\n')
-	print('LEfSe Publication: "Metagenomic biomarker discovery and explanation"')
-	print('Nicola Segata, Jacques Izard, Levi Waldron, Dirk Gevers, \n' +
-	'Larisa Miropolsky, Wendy S Garrett, and Curtis Huttenhower')
-	print('Genome Biology, 12:R60, 2011')
+	print('\033[95m' + "koeken" + ' v' + __version__ + '\033[0m')
+	print('Written by: ' + '\033[94m' + __author__ + ' (' + __email__ + ') ' +
+        '\033[0m' + '\n')
+
+	print('\033[92m' + 'LEfSe Publication:\n'
+         'Metagenomic biomarker discovery and explanation.\n'
+         'Nicola Segata, Jacques Izard, Levi Waldron, Dirk Gevers\n'
+	     'Larisa Miropolsky, Wendy S Garrett, and Curtis Huttenhower')
+	print('Genome Biology, 12:R60, 2011' + '\033[0m')
 	print("=================================================================\n")
 
 	# Get arguments
