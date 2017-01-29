@@ -33,5 +33,5 @@ setuptools.setup(
             'koeken = koeken.koeken:main'
         ]},
     packages=setuptools.find_packages(),
-    install_requires=['rpy2', 'argparse', 'pandas', 'biopython', 'lefse']
+    install_requires=['rpy2', 'argparse', 'pandas', 'biopython']
 )
