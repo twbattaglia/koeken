@@ -21,7 +21,7 @@ def create_dir(path):
 	if not os.path.exists(path):
 		os.makedirs(path)
 		print('Created directory: ' + path)
-		
+
 
 def summarize_taxa(args):
 	summarize_fp = args.output_dir + "/summarize_table.txt"
@@ -67,7 +67,7 @@ def check_map(args):
 		'as a column name in your mapping file.')
 
 	# Err if no variable to split by
-	if str(args.split) not in map_chk.columns.values.tolist():
+	if not args.no_split and str(args.split) not in map_chk.columns.values.tolist():
 		raise ValueError('Warning. There is no split variable with that '
 		'column name in your mapping file. Please verify the splitting ID '
 		'chosen exists as a column name in your mapping file.')
