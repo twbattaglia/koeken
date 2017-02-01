@@ -9,6 +9,7 @@ before_install:
   - export PATH=/home/travis/miniconda2/bin:$PATH
 install:
   - conda config --add channels bioconda
-  - conda create --yes -n test-env -c bioconda python=$PYTHON_VERSION qiime=1.9.1 pandas rpy2 biopython lefse
+  - conda config --add channels r
+  - conda create --yes -n test-env -c bioconda python=$PYTHON_VERSION qiime=1.9.1 pandas rpy2 biopython lefse r-optparse r-gtools r-klar r-survival r-mvtnorm r-modeltools r-coin r-mass
   - source activate test-env
   - pip install .
