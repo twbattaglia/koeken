@@ -3,10 +3,11 @@
 	util.py
 	~~~~~~~~~
 	Utility functions for koeken.
-	:copyright: (c) 2016 by Thomas W. Battaglia.
+	:copyright: (c) 2017 by Thomas W. Battaglia.
 	:license: BSD, see LICENSE for more details.
 '''
 import os
+import sys
 import subprocess
 import pandas as pd
 from qiime.summarize_taxa import make_summary, add_summary_mapping
@@ -81,23 +82,58 @@ def check_map(args):
 
 def format_lefse(input_fp, output_fp, name, subclass=None):
 	print('Formatting data for: ' + str(name))
+
+	# Run format command
 	if subclass is not None:
-		subprocess.call(['lefse-format_input.py', input_fp, output_fp,
-					     '-u 1', '-c 2', '-s 3', '-o 1000000', '-f', 'r'])
+		cmd = ['lefse-format_input.py', input_fp, output_fp,
+			   '-u 1', '-c 2', '-s 3', '-o 1000000', '-f', 'r']
 	else:
-		subprocess.call(['lefse-format_input.py', input_fp, output_fp,
-						 '-u 1', '-c 2', '-o 1000000', '-f', 'r'])
+		cmd = ['lefse-format_input.py', input_fp, output_fp,
+		       '-u 1', '-c 2', '-o 1000000', '-f', 'r']
+
+	# Try/Else block for runing command
+	try:
+		if os.path.isfile(input_fp):
+			print("Overwriting file " + input_fp)
+		p_out = subprocess.check_output(cmd, stderr = subprocess.STDOUT)
+	except (EnvironmentError, subprocess.CalledProcessError):
+		command=" ".join(cmd)
+		sys.exit("Unable to format data for lefse" + "\n" + command)
+
 
 def run_lefse(input_fp, output_fp, name, args):
 	print('Running LEfSe on: ' + str(name))
-	subprocess.call(['run_lefse.py', input_fp, output_fp,
+
+	# Run lefse command
+	cmd = ['run_lefse.py', input_fp, output_fp,
 					 '-a', str(args.pvalue),
 					 '-l', str(args.lda),
-					 '-y', str(args.strictness)])
+					 '-y', str(args.strictness)]
+
+	# Try/Else block for runing command
+	try:
+		if os.path.isfile(input_fp):
+			print("Overwriting file " + input_fp)
+		p_out = subprocess.check_output(cmd, stderr = subprocess.STDOUT)
+	except (EnvironmentError, subprocess.CalledProcessError):
+		command = " ".join(cmd)
+		sys.exit("Unable to run lefse analysis" + "\n" + command)
+
 
 def plot_cladogram(input_fp, output_fp, name, args):
 	print('Plotting cladogram for: ' + str(name))
-	subprocess.call(['lefse-plot_cladogram.py', input_fp, output_fp,
-					 '--format', args.image_type,
-					 '--dpi', str(args.dpi),
-					 '--title', str(name)])
+
+	# Run plot command
+	cmd = ['lefse-plot_cladogram.py', input_fp, output_fp,
+			'--format', args.image_type,
+			'--dpi', str(args.dpi),
+			'--title', str(name)]
+
+	# Try/Else block for runing command
+	try:
+		if os.path.isfile(input_fp):
+			print("Overwriting file " + input_fp)
+		p_out = subprocess.check_output(cmd, stderr = subprocess.STDOUT)
+	except (EnvironmentError, subprocess.CalledProcessError):
+		command = " ".join(cmd)
+		sys.exit("Unable to run plot cladogram" + "\n" + command)
