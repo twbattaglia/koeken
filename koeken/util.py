@@ -93,8 +93,8 @@ def format_lefse(input_fp, output_fp, name, subclass=None):
 
 	# Try/Else block for runing command
 	try:
-		if os.path.isfile(input_fp):
-			print("Overwriting file " + input_fp)
+		#if os.path.isfile(input_fp):
+		#	print("Overwriting file " + input_fp)
 		p_out = subprocess.check_output(cmd, stderr = subprocess.STDOUT)
 	except (EnvironmentError, subprocess.CalledProcessError):
 		command=" ".join(cmd)
@@ -112,8 +112,8 @@ def run_lefse(input_fp, output_fp, name, args):
 
 	# Try/Else block for runing command
 	try:
-		if os.path.isfile(input_fp):
-			print("Overwriting file " + input_fp)
+		#if os.path.exists(input_fp):
+		#	print("Overwriting file " + input_fp)
 		p_out = subprocess.check_output(cmd, stderr = subprocess.STDOUT)
 	except (EnvironmentError, subprocess.CalledProcessError):
 		command = " ".join(cmd)
@@ -131,8 +131,8 @@ def plot_cladogram(input_fp, output_fp, name, args):
 
 	# Try/Else block for runing command
 	try:
-		if os.path.isfile(input_fp):
-			print("Overwriting file " + input_fp)
+		#if os.path.isfile(input_fp):
+		#	print("Overwriting file " + input_fp)
 		p_out = subprocess.check_output(cmd, stderr = subprocess.STDOUT)
 	except (EnvironmentError, subprocess.CalledProcessError):
 		command = " ".join(cmd)
