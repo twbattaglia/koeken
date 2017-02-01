@@ -15,17 +15,13 @@ __status__ = 'Development'
 description = """
 Koeken
 =================================
-This package is meant to provide better integration of the LEfSe algorithm
-into a typical metagneomic analysis workflow. The statistical analysis can be
+This package is meant to provide better integration of the LEfSe into a
+typical metagneomic analysis workflow. The statistical analysis can be
 applied to QIIME, PICRUSt or humann2 datasets, without the need to manually
 add metadata. It was developed to reduce the risk of incorrect metadata
 and increased the reproducibility of analytical studies.
 """
 
-import util
-import sys
-import re
-import argparse
 try:
 	import pandas as pd
 except ImportError:
@@ -38,6 +34,14 @@ try:
 	import biom
 except ImportError:
 	raise ImportError('The module "biom-format" could not be found.')
+try:
+	import rpy2
+except ImportError:
+	raise ImportError('The module "rpy2" could not be found.')
+import util
+import sys
+import re
+import argparse
 
 
 # ---------------------------------------------------------------
@@ -56,26 +60,26 @@ def parse_arguments():
     parser.add_argument(
         "-i", "--input",
 		dest = "input_fp",
-        metavar = "<path>",
+        metavar = "<file>",
 		type = str,
         required = True,
         help = "File path to input feature table.\n")
     parser.add_argument(
         "-o", "--output",
 		dest = "output_dir",
-        metavar = "<path>",
+        metavar = "<folder>",
         type = str,
 		required = True,
         help = "Folder path to store output files.\n")
     parser.add_argument(
         "-m", "--mapping",
-        metavar = "<path>",
+        metavar = "<file>",
 		type = str,
         required = True,
         help = "Path to sample metadata.")
     parser.add_argument(
         "-f", "--format",
-        metavar="<str>",
+        metavar="<string>",
 		type = str,
 		choices = ["qiime", "picrust", "humann2"],
         required = True,
@@ -109,7 +113,6 @@ def parse_arguments():
         metavar = "<string>",
         type = str,
 		default = "",
-		required = True,
 		nargs = '+',
         help = "Select the factors within the class variable that you would \n"
 			   "like to compare. Be sure to use a space to separate the \n"
@@ -129,7 +132,7 @@ def parse_arguments():
 	# QIIME Params
     parser.add_argument(
         "-l", "--level",
-        metavar = "<int>",
+        metavar = "<number>",
         type = int ,
 		choices = [2, 3, 4, 5, 6, 7],
 		default = 6,
@@ -141,23 +144,30 @@ def parse_arguments():
 			   "Level 5 = Family (e.g Streptomycetaceae)\n"
 			   "Level 6 = Genus (e.g Streptomyces)\n"
 	    	   "Level 7 = Species (e.g mirabilis)\n")
+    parser.add_argument(
+        "-n", "--unclassified",
+        metavar = "<string>",
+        type = str ,
+		default = "unclassified",
+        help = "The name used to replace taxa without a complete phylogeny \n"
+			   "[DEFAULT: unclassified]")
 
 	# LEfSe Options
     parser.add_argument(
         "--pvalue",
-        metavar = "<float>",
+        metavar = "<number>",
         type = float,
 		default = 0.05,
         help = "Maximum p-value for LEfSe analysis. [DEFAULT: 0.05]" )
     parser.add_argument(
         "--lda",
-		metavar = "<float>",
+		metavar = "<number>",
         type = float,
 		default = 2.0,
         help = "Minimum LDA score for LEfSe analysis. [DEFAULT: 2]")
     parser.add_argument(
         "--strictness",
-		metavar = "<int>",
+		metavar = "<number>",
         type = int,
 		choices = [0,1],
 		default = 0,
@@ -166,7 +176,7 @@ def parse_arguments():
 			   "1 = One-against-all (less strict)")
     parser.add_argument(
         "--image-type",
-		metavar = "<str>",
+		metavar = "<string>",
 		dest = "image_type",
         type = str,
 		choices = ["png", "pdf", "svg"],
@@ -174,7 +184,7 @@ def parse_arguments():
         help = "Format-type of output cladogram image. [DEFAULT: pdf] ")
     parser.add_argument(
         "--dpi",
-		metavar = "<int>",
+		metavar = "<number>",
 		type = int,
     	default = 300,
         help = "Resolution of output cladogram image. [DEFAULT: 300] ")
@@ -250,16 +260,23 @@ def main():
 		# Remove greengenes taxa names to make it prettier
 		# TODO fix the double || error
 		if args.format=="qiime":
-			sumtbl_df=sumtbl_df.rename(columns=lambda x: re.sub('__$', "__unclassified", x))
+
+            # Replace blank names (e.g g__)
+			sumtbl_df=sumtbl_df.rename(columns=lambda x: re.sub('__$', "__" + args.unclassified, x))
+
+            # Remove greengenes ID (e.g k__|p__|c__ )
 			sumtbl_df=sumtbl_df.rename(columns=lambda x: re.sub('.__', '', x))
-			#sumtbl_df=sumtbl_df.rename(columns=lambda x: re.sub('|', '|', x))
+
+            # Remove names
+			#sumtbl_df=sumtbl_df.rename(columns=lambda x: re.sub('', args.unclassified, x))
 
 		# Run the analysis with all timepoints merged
-		all_split=args.output_dir + "/split_tables/all_timepoints.txt"
-		all_format=args.output_dir + "/formatted/all_timepoints.txt"
-		all_results=args.output_dir + "/results/all_timepoints.txt"
-		all_clade=args.output_dir + "/cladograms/all_timepoints."+args.image_type
+		all_split=args.output_dir + "/split_tables/all_levels.txt"
+		all_format=args.output_dir + "/formatted/all_levels.txt"
+		all_results=args.output_dir + "/results/all_levels.txt"
+		all_clade=args.output_dir + "/cladograms/all_levels."+ args.image_type
 
+        # Transpose table and write to disk
 		sumtbl_df_tsp = sumtbl_df.iloc[:,to_keep].transpose()
 		sumtbl_df_tsp.to_csv(all_split, sep='\t', header=False, index=True)
 
@@ -332,3 +349,6 @@ def main():
 				print('=========================================================\n')
 	else:
 		print("Running humann2 workflow")
+
+if __name__ == '__main__':
+    main()
