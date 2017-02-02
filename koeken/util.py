@@ -65,13 +65,15 @@ def check_map(args):
 	if str(args.classid) not in map_chk.columns.values.tolist():
 		raise ValueError('Warning. There is no class variable with that column '
 		'name in your mapping file. Please verify the class ID chosen exists '
-		'as a column name in your mapping file.')
+		'as a column name in your mapping file or see listed variables: \n ' +
+		str(map_chk.columns.tolist()))
 
 	# Err if no variable to split by
 	if not args.no_split and str(args.split) not in map_chk.columns.values.tolist():
 		raise ValueError('Warning. There is no split variable with that '
 		'column name in your mapping file. Please verify the splitting ID '
-		'chosen exists as a column name in your mapping file.')
+		'chosen exists as a column name in your mapping file: \n ' +
+		str(map_chk.columns.tolist()))
 
 	# Err if comparison param did not use spaces.
 	if(args.compare) != '':
